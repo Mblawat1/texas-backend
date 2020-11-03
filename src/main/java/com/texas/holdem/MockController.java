@@ -8,6 +8,7 @@ public class MockController {
 
     @GetMapping("/*")
     public String mock(){
+        var xD= "xD";
         return "Some Text";
     }
 }
