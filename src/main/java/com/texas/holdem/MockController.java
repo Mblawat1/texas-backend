@@ -6,9 +6,34 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class MockController {
 
-    @GetMapping("/*")
-    public String mock(){
+    class SomeResponse{
+        private String text;
+
+        public SomeResponse(String text) {
+            this.text = text;
+        }
+
+        public SomeResponse() {
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public void setText(String text) {
+            this.text = text;
+        }
+    }
+
+    @GetMapping("/**/{[path:[^\\\\.]*}")
+    public SomeResponse mock(){
         var xD= "xD";
-        return "Some Text";
+        return new SomeResponse(xD);
+    }
+
+    @GetMapping("/")
+    public SomeResponse mock2(){
+        var xD= "xD";
+        return new SomeResponse(xD);
     }
 }
