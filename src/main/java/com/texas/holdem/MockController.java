@@ -1,8 +1,6 @@
 package com.texas.holdem;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class MockController {
@@ -40,6 +38,21 @@ public class MockController {
 
     @GetMapping("/socket.io")
     public SomeResponse mock3(){
+        var xD= "xD";
+        return new SomeResponse(xD);
+    }
+    @PostMapping("/socket.io")
+    public SomeResponse mock4(){
+        var xD= "xD";
+        return new SomeResponse(xD);
+    }
+    @PutMapping("/socket.io")
+    public SomeResponse mock5(){
+        var xD= "xD";
+        return new SomeResponse(xD);
+    }
+    @DeleteMapping("/socket.io")
+    public SomeResponse mock6(){
         var xD= "xD";
         return new SomeResponse(xD);
     }
