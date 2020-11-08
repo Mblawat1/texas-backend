@@ -37,4 +37,10 @@ public class MockController {
         var xD= "xD";
         return new SomeResponse(xD);
     }
+
+    @GetMapping("/socket.io")
+    public SomeResponse mock3(){
+        var xD= "xD";
+        return new SomeResponse(xD);
+    }
 }
