@@ -29,7 +29,7 @@ public class MockController {
     @CrossOrigin("*")
     @MessageMapping("/test")
     @SendTo("/test")
-    public SomeResponse send(String str)throws Exception{
-        return new SomeResponse(str);
+    public String send(String str)throws Exception{
+        return str;
     }
 }
