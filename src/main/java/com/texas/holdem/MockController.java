@@ -1,5 +1,7 @@
 package com.texas.holdem;
 
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,15 +26,10 @@ public class MockController {
         }
     }
 
-    @GetMapping("/**/{[path:[^\\\\.]*}")
-    public SomeResponse mock(){
-        var xD= "xD";
-        return new SomeResponse(xD);
-    }
-
-    @GetMapping("/")
-    public SomeResponse mock2(){
-        var xD= "xD";
-        return new SomeResponse(xD);
+    @CrossOrigin("*")
+    @MessageMapping("/test")
+    @SendTo("/test")
+    public SomeResponse send(String str)throws Exception{
+        return new SomeResponse(str);
     }
 }
