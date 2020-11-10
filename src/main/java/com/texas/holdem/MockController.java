@@ -35,11 +35,4 @@ public class MockController {
         var xD= "xD";
         return new SomeResponse(xD);
     }
-
-
-    @RequestMapping(method = {RequestMethod.GET,RequestMethod.DELETE,RequestMethod.POST,RequestMethod.PUT}, path="/socket.io")
-    public SomeResponse mock3(){
-        var xD= "xD";
-        return new SomeResponse(xD);
-    }
 }
