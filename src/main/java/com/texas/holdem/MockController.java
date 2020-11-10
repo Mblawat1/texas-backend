@@ -30,6 +30,6 @@ public class MockController {
     @MessageMapping("/test")
     @SendTo("/test")
     public SomeResponse send(String str)throws Exception{
-        return new SomeResponse("str");
+        return new SomeResponse(str);
     }
 }
