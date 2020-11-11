@@ -1,6 +1,4 @@
-package com.texas.elements;
-
-import com.texas.elements.Card;
+package com.texas.holdem.elements;
 
 import java.util.ArrayList;
 

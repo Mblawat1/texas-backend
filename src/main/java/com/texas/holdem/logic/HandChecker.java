@@ -1,10 +1,9 @@
-package com.texas.logic;
+package com.texas.holdem.logic;
 
-import com.texas.elements.HoleSet;
-import com.texas.elements.CommunitySet;
+import com.texas.holdem.elements.HoleSet;
+import com.texas.holdem.elements.CommunitySet;
 
 import java.util.HashMap;
-import java.util.Map;
 
 public class HandChecker {
 

@@ -1,4 +1,4 @@
-package com.texas.elements;
+package com.texas.holdem.elements;
 
 public class Card {
     int number;
