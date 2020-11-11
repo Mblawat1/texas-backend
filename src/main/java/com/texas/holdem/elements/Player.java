@@ -4,11 +4,13 @@ public class Player {
     String id;
     String nickname;
     int budget;
+    HoleSet holeSet;
 
-    public Player(String id, String nickname, int budget) {
+    public Player(String id, String nickname, int budget, HoleSet holeSet) {
         this.id = id;
         this.nickname = nickname;
         this.budget = budget;
+        this.holeSet = holeSet;
     }
 
     public String getId() {
@@ -34,4 +36,13 @@ public class Player {
     public void setBudget(int budget) {
         this.budget = budget;
     }
+
+    public HoleSet getHoleSet() {
+        return holeSet;
+    }
+
+    public void setHoleSet(HoleSet holeSet) {
+        this.holeSet = holeSet;
+    }
+
 }

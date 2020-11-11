@@ -1,4 +1,4 @@
-package com.texas.holdem;
+package com.texas.holdem.web;
 
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;

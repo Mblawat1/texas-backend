@@ -10,6 +10,7 @@ public class Room {
     Player player6;
     Player player7;
     Player player8;
+    Table table;
 
     public Room(String id) {
         this.id = id;
@@ -78,11 +79,11 @@ public class Room {
         this.player8 = player8;
     }
 
-    public String getID() {
+    public String getId() {
         return id;
     }
 
-    public void setID(String id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -148,5 +149,13 @@ public class Room {
 
     public void setPlayer8(Player player8) {
         this.player8 = player8;
+    }
+
+    public Table getTable() {
+        return table;
+    }
+
+    public void setTable(Table table) {
+        this.table = table;
     }
 }
