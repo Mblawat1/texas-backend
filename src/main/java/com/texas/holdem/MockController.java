@@ -1,14 +1,35 @@
 package com.texas.holdem;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class MockController {
 
-    @GetMapping("/*")
-    public String mock(){
-        var xD= "xD";
-        return "Some Text";
+    class SomeResponse{
+        private String text;
+
+        public SomeResponse(String text) {
+            this.text = text;
+        }
+
+        public SomeResponse() {
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public void setText(String text) {
+            this.text = text;
+        }
+    }
+
+    @CrossOrigin("*")
+    @MessageMapping("/test")
+    @SendTo("/test")
+    public String send(String str)throws Exception{
+        return str;
     }
 }

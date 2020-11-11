@@ -17,6 +17,8 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	compile group: 'org.springframework', name: 'spring-websocket', version: '5.2.10.RELEASE'
+	compile group: 'org.springframework', name: 'spring-messaging', version: '5.2.10.RELEASE'
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
