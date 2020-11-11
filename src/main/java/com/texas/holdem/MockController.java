@@ -1,5 +1,6 @@
 package com.texas.holdem;
 
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
@@ -28,8 +29,16 @@ public class MockController {
 
     @CrossOrigin("*")
     @MessageMapping("/test")
-    @SendTo("/test")
+    @SendTo("/test/return")
     public String send(String str)throws Exception{
-        return str;
+        return "Hej " + str;
+    }
+
+    // send to musi być inny bo jeśli jest taki sam jak endpoint to klient odbiera też to co wysyła do servera
+    @CrossOrigin("*")
+    @MessageMapping("/room/{roomId}")
+    @SendTo("/room/{roomId}/return")
+    public String sendRoom(@DestinationVariable String roomId, String msg){
+        return "Pokój " + roomId + " msg: " + msg;
     }
 }
