@@ -3,11 +3,11 @@ package com.texas.holdem.elements;
 import java.util.ArrayList;
 
 public class Room {
-    String id;
+    int id;
     ArrayList<Player> players;
     Table table;
 
-    public Room(String id, Table table) {
+    public Room(int id, Table table) {
         this.id = id;
         this.players = new ArrayList<Player>();
         this.table = table;
@@ -16,11 +16,11 @@ public class Room {
     public Room() {
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 

@@ -8,7 +8,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.Optional;
 
 
 @RestController
@@ -16,6 +20,9 @@ public class RoomController {
 
     @Autowired
     RoomService roomService;
+
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     class SomeResponse{
         private String text;
@@ -51,10 +58,21 @@ public class RoomController {
         return new SomeResponse(msg);
     }
 
+    //wysyłanie wiadomości nie w sockecie
+    //simpMessagingTemplate.convertAndSend("/room/"+id+"/updates",new SomeResponse("xd"));
+
     //returnuje room id
     @PostMapping("/api/createRoom")
     public ResponseEntity<RoomId> createRoom(){
         var id = roomService.createRoom();
         return ResponseEntity.status(HttpStatus.CREATED).body(new RoomId(id));
+    }
+
+    @GetMapping("/api/room/{roomId}")
+    public ResponseEntity<Optional<RoomId>> getRoom(@PathVariable int roomId){
+        var res = roomService.getRoom(new RoomId(roomId));
+        if (res.isEmpty())
+            return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(Optional.of(new RoomId(roomId)));
     }
 }

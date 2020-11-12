@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
 
 @Service
 public class RoomService {
@@ -20,9 +21,15 @@ public class RoomService {
     //returnuje room id
     public int createRoom(){
         var id = rooms.size()+1000;
-        var room = new Room(String.valueOf(id),new Table(String.valueOf(id),1));
+        var room = new Room(id,new Table(String.valueOf(id),1));
         rooms.put(new RoomId(id),room);
         return id;
+    }
+
+    public Optional<Room> getRoom(RoomId id){
+        if (rooms.containsKey(id))
+            return Optional.of(rooms.get(id));
+        return Optional.empty();
     }
 }
 
