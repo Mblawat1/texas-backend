@@ -1,10 +1,7 @@
 package com.texas.holdem.web;
 
-import com.texas.holdem.elements.Player;
-import com.texas.holdem.elements.Room;
 import com.texas.holdem.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -12,8 +9,6 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.http.HttpResponse;
-import java.util.ArrayList;
 
 @RestController
 public class RoomController {
@@ -40,6 +35,25 @@ public class RoomController {
         }
     }
 
+    class Id{
+        int id;
+
+        public Id(int id) {
+            this.id = id;
+        }
+
+        public Id() {
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+    }
+
     @CrossOrigin("*")
     @MessageMapping("/test")
     @SendTo("/test/return")
@@ -56,9 +70,9 @@ public class RoomController {
     }
 
     //returnuje room id
-    @PostMapping("/createRoom")
-    public ResponseEntity<Integer> createRoom(){
+    @PostMapping("/api/createRoom")
+    public ResponseEntity<Id> createRoom(){
         var id = roomService.createRoom();
-        return ResponseEntity.status(HttpStatus.CREATED).body(id);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new Id(id));
     }
 }
