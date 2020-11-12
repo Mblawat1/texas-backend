@@ -1,5 +1,6 @@
 package com.texas.holdem.web;
 
+import com.texas.holdem.elements.RoomId;
 import com.texas.holdem.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,25 +36,6 @@ public class RoomController {
         }
     }
 
-    class Id{
-        int id;
-
-        public Id(int id) {
-            this.id = id;
-        }
-
-        public Id() {
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public void setId(int id) {
-            this.id = id;
-        }
-    }
-
     @CrossOrigin("*")
     @MessageMapping("/test")
     @SendTo("/test/return")
@@ -71,8 +53,8 @@ public class RoomController {
 
     //returnuje room id
     @PostMapping("/api/createRoom")
-    public ResponseEntity<Id> createRoom(){
+    public ResponseEntity<RoomId> createRoom(){
         var id = roomService.createRoom();
-        return ResponseEntity.status(HttpStatus.CREATED).body(new Id(id));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new RoomId(id));
     }
 }
