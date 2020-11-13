@@ -1,14 +1,14 @@
 package com.texas.holdem.service;
 
-import com.texas.holdem.elements.Player;
+import com.texas.holdem.elements.PlayerDTO;
 import com.texas.holdem.elements.Room;
 import com.texas.holdem.elements.RoomId;
 import com.texas.holdem.elements.Table;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class RoomService {
@@ -19,17 +19,43 @@ public class RoomService {
     }
 
     //returnuje room id
-    public int createRoom(){
-        var id = rooms.size()+1000;
-        var room = new Room(id,new Table(String.valueOf(id),1));
-        rooms.put(new RoomId(id),room);
-        return id;
+    public String createRoom(){
+        RoomId id;
+        do{
+            id = generateId();
+        }while(rooms.containsKey(id));
+
+        var room = new Room(id.getId(),new Table(String.valueOf(id),1));
+        rooms.put(id,room);
+        return id.getId();
     }
 
     public Optional<Room> getRoom(RoomId id){
         if (rooms.containsKey(id))
             return Optional.of(rooms.get(id));
         return Optional.empty();
+    }
+
+    public Optional<Room> deleteRoom(RoomId roomId){
+        return Optional.ofNullable(rooms.remove(roomId));
+    }
+
+    public boolean addPlayer(RoomId roomId, PlayerDTO playerDTO){
+        var optRoom = getRoom(roomId);
+        if (optRoom.isEmpty())
+            return false;
+        optRoom.get().addPlayer(playerDTO);
+        return true;
+    }
+
+    private RoomId generateId(){
+        var rand = new Random();
+        var sb = new StringBuilder();
+        for(int i=0;i<4;i++){
+            var ch = String.valueOf((char) (rand.nextInt(25)+65));
+            sb.append(ch);
+        }
+        return new RoomId(sb.toString());
     }
 }
 

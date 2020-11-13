@@ -3,20 +3,20 @@ package com.texas.holdem.elements;
 import java.util.Objects;
 
 public class RoomId {
-    private int id;
+    private String id;
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
     public RoomId() {
     }
 
-    public RoomId(int id) {
+    public RoomId(String id) {
         this.id = id;
     }
 
@@ -32,7 +32,7 @@ public class RoomId {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RoomId roomId = (RoomId) o;
-        return id == roomId.id;
+        return id.equals(roomId.id);
     }
 
     @Override

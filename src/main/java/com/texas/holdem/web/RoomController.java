@@ -1,5 +1,6 @@
 package com.texas.holdem.web;
 
+import com.texas.holdem.elements.PlayerDTO;
 import com.texas.holdem.elements.RoomId;
 import com.texas.holdem.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +11,6 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.Optional;
 
 
 @RestController
@@ -43,7 +41,6 @@ public class RoomController {
         }
     }
 
-    @CrossOrigin("*")
     @MessageMapping("/test")
     @SendTo("/test/return")
     public String send(String str)throws Exception{
@@ -53,26 +50,45 @@ public class RoomController {
     // send to musi być inny bo jeśli jest taki sam jak endpoint to klient odbiera też to co wysyła do servera
     @CrossOrigin("*")
     @MessageMapping("/room/{roomId}")
-    @SendTo("/room/{roomId}/updates")
+    @SendTo("/topic/room/{roomId}")
     public Object sendRoom(@DestinationVariable String roomId, String msg){
         return new SomeResponse(msg);
     }
 
     //wysyłanie wiadomości nie w sockecie
-    //simpMessagingTemplate.convertAndSend("/room/"+id+"/updates",new SomeResponse("xd"));
+    //simpMessagingTemplate.convertAndSend("/topic/room/"+id,new SomeResponse("xd"));
 
     //returnuje room id
     @PostMapping("/api/createRoom")
     public ResponseEntity<RoomId> createRoom(){
-        var id = roomService.createRoom();
+        String id = roomService.createRoom();
         return ResponseEntity.status(HttpStatus.CREATED).body(new RoomId(id));
     }
 
+    //sprawdzanie czy pokój istnieje, jeśli tak odsyła id, front może subskrybować socket
     @GetMapping("/api/room/{roomId}")
-    public ResponseEntity<Optional<RoomId>> getRoom(@PathVariable int roomId){
+    public ResponseEntity<RoomId> getRoomId(@PathVariable String roomId){
         var res = roomService.getRoom(new RoomId(roomId));
         if (res.isEmpty())
             return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(Optional.of(new RoomId(roomId)));
+        return ResponseEntity.ok(new RoomId(roomId));
+    }
+
+    @DeleteMapping("/api/room/{roomId}")
+    public ResponseEntity<?> deleteRoom(@PathVariable String roomId){
+        var res = roomService.deleteRoom(new RoomId(roomId));
+        if (res.isEmpty())
+            return ResponseEntity.notFound().build();
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/api/room/{roomId}")
+    public ResponseEntity<?> joinRoom(@PathVariable String roomId, @RequestBody PlayerDTO player){
+        var res = roomService.addPlayer(new RoomId(roomId),player);
+        if (res){
+            simpMessagingTemplate.convertAndSend("/topic/room/"+roomId,roomService.getRoom(new RoomId(roomId)));
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 }

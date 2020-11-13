@@ -1,23 +1,23 @@
 package com.texas.holdem.elements;
 
 public class Player {
-    String id;
+    int id;
     String nickname;
     int budget;
     HoleSet holeSet;
 
-    public Player(String id, String nickname, int budget, HoleSet holeSet) {
+    public Player(int id, String nickname, int budget, HoleSet holeSet) {
         this.id = id;
         this.nickname = nickname;
         this.budget = budget;
         this.holeSet = holeSet;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
