@@ -4,6 +4,7 @@ import com.texas.holdem.elements.PlayerDTO;
 import com.texas.holdem.elements.Room;
 import com.texas.holdem.elements.RoomId;
 import com.texas.holdem.elements.Table;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -40,12 +41,15 @@ public class RoomService {
         return Optional.ofNullable(rooms.remove(roomId));
     }
 
-    public boolean addPlayer(RoomId roomId, PlayerDTO playerDTO){
+    public HttpStatus addPlayer(RoomId roomId, PlayerDTO playerDTO){
         var optRoom = getRoom(roomId);
         if (optRoom.isEmpty())
-            return false;
-        optRoom.get().addPlayer(playerDTO);
-        return true;
+            return HttpStatus.NOT_FOUND;
+        var room = optRoom.get();
+        if (room.getPlayers().size() == 8)
+            return HttpStatus.BAD_REQUEST;
+        room.addPlayer(playerDTO);
+        return HttpStatus.OK;
     }
 
     private RoomId generateId(){
@@ -56,6 +60,15 @@ public class RoomService {
             sb.append(ch);
         }
         return new RoomId(sb.toString());
+    }
+
+    public HttpStatus deletePlayer(RoomId roomId, int playerId) {
+        var optRoom = getRoom(roomId);
+        if (optRoom.isEmpty())
+            return HttpStatus.NOT_FOUND;
+        var room = optRoom.get();
+        room.deletePlayer(playerId);
+        return HttpStatus.OK;
     }
 }
 

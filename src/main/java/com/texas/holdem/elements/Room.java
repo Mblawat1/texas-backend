@@ -1,11 +1,14 @@
 package com.texas.holdem.elements;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import java.util.ArrayList;
 
 public class Room {
     String id;
     ArrayList<Player> players;
     Table table;
+    private int startingBudget = 5000;
 
     public Room(String id, Table table) {
         this.id = id;
@@ -41,6 +44,12 @@ public class Room {
     }
 
     public void addPlayer(PlayerDTO playerDTO){
-        players.add(new Player(players.size(),playerDTO.getNickname(),playerDTO.getBudget(),new HoleSet()));
+        players.add(new Player(players.size(),playerDTO.getNickname(),startingBudget,new HoleSet()));
+    }
+
+    public void deletePlayer(int id){
+        players.remove(id);
+        for(int i=0;i<players.size();i++)
+            players.get(i).id = i;
     }
 }

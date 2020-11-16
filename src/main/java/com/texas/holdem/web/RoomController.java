@@ -74,6 +74,7 @@ public class RoomController {
         return ResponseEntity.ok(new RoomId(roomId));
     }
 
+    //usunięcie pokoju
     @DeleteMapping("/api/room/{roomId}")
     public ResponseEntity<?> deleteRoom(@PathVariable String roomId){
         var res = roomService.deleteRoom(new RoomId(roomId));
@@ -82,13 +83,4 @@ public class RoomController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/api/room/{roomId}")
-    public ResponseEntity<?> joinRoom(@PathVariable String roomId, @RequestBody PlayerDTO player){
-        var res = roomService.addPlayer(new RoomId(roomId),player);
-        if (res){
-            simpMessagingTemplate.convertAndSend("/topic/room/"+roomId,roomService.getRoom(new RoomId(roomId)));
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.notFound().build();
-    }
 }
