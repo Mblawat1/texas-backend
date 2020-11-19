@@ -2,11 +2,11 @@ package com.texas.holdem.elements;
 
 public class Table {
     String roomId;
-    int size;
+    private int coinsInRound;
 
-    public Table(String roomId, int size) {
+    public Table(String roomId) {
         this.roomId = roomId;
-        this.size = size;
+        coinsInRound=0;
     }
 
     public String getRoomId() {
@@ -17,11 +17,15 @@ public class Table {
         this.roomId = roomId;
     }
 
-    public int getSize() {
-        return size;
+    public int getCoinsInRound() {
+        return coinsInRound;
     }
 
-    public void setSize(int size) {
-        this.size = size;
+    public void setCoinsInRound(int coinsInRound) {
+        this.coinsInRound = coinsInRound;
+    }
+
+    public void addCoinsInRound(int bet) {
+        coinsInRound+=bet;
     }
 }

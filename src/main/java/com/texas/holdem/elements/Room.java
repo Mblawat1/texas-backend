@@ -3,6 +3,7 @@ package com.texas.holdem.elements;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class Room {
     String id;
@@ -51,5 +52,30 @@ public class Room {
         players.remove(id);
         for(int i=0;i<players.size();i++)
             players.get(i).id = i;
+    }
+
+    public void nextTurn(int playerId) {
+        var activePlayer = players.get(playerId);
+        activePlayer.setActive(false);
+        //szukam pierwszego aktywnego
+        var lowerId = players.stream().filter(n -> !n.isPass()).findFirst();
+        //szukam pierwszego aktywnego z wyższym id
+        var higherId = players.stream().filter(n -> n.id>playerId).findFirst();
+        //jeśli jest z wyższym id to zmieniam jego
+        if(higherId.isPresent()){
+            var pla = higherId.get();
+            pla.setActive(true);
+            players.set(pla.id,pla);
+        }else if(lowerId.isPresent()){
+            var pla = lowerId.get();
+            pla.setActive(true);
+            players.set(pla.id,pla);
+        }
+        //TODO Tutaj można dodać zakończenie rozdania jak już będzie logika
+
+    }
+
+    public void addCoinsInRound(int bet) {
+        table.addCoinsInRound(bet);
     }
 }

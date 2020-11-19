@@ -26,7 +26,7 @@ public class RoomService {
             id = generateId();
         }while(rooms.containsKey(id));
 
-        var room = new Room(id.getId(),new Table(String.valueOf(id),1));
+        var room = new Room(id.getId(),new Table(id.getId()));
         rooms.put(id,room);
         return id.getId();
     }
@@ -41,16 +41,6 @@ public class RoomService {
         return Optional.ofNullable(rooms.remove(roomId));
     }
 
-    public HttpStatus addPlayer(RoomId roomId, PlayerDTO playerDTO){
-        var optRoom = getRoom(roomId);
-        if (optRoom.isEmpty())
-            return HttpStatus.NOT_FOUND;
-        var room = optRoom.get();
-        if (room.getPlayers().size() == 8)
-            return HttpStatus.BAD_REQUEST;
-        room.addPlayer(playerDTO);
-        return HttpStatus.OK;
-    }
 
     private RoomId generateId(){
         var rand = new Random();
@@ -62,13 +52,5 @@ public class RoomService {
         return new RoomId(sb.toString());
     }
 
-    public HttpStatus deletePlayer(RoomId roomId, int playerId) {
-        var optRoom = getRoom(roomId);
-        if (optRoom.isEmpty())
-            return HttpStatus.NOT_FOUND;
-        var room = optRoom.get();
-        room.deletePlayer(playerId);
-        return HttpStatus.OK;
-    }
 }
 
