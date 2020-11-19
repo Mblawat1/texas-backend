@@ -60,7 +60,7 @@ public class Room {
         //szukam pierwszego aktywnego
         var lowerId = players.stream().filter(n -> !n.isPass()).findFirst();
         //szukam pierwszego aktywnego z wyższym id
-        var higherId = players.stream().filter(n -> n.id>playerId).findFirst();
+        var higherId = players.stream().filter(n -> !n.isPass() && n.id>playerId).findFirst();
         //jeśli jest z wyższym id to zmieniam jego
         if(higherId.isPresent()){
             var pla = higherId.get();

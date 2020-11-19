@@ -72,4 +72,15 @@ public class PlayerController {
         }
         return ResponseEntity.status(res).build();
     }
+
+    @PutMapping(path="/api/room/{roomId}/player/{playerId}", params = {"pass"})
+    public ResponseEntity<?> pass(@PathVariable String roomId, @PathVariable int playerId,@RequestParam boolean pass){
+        var res = playerService.pass(new RoomId(roomId), playerId);
+        if (res == HttpStatus.OK){
+            simpMessagingTemplate.convertAndSend("/topic/room/"+roomId,roomService.getRoom(new RoomId(roomId)));
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.status(res).build();
+    }
+
 }
