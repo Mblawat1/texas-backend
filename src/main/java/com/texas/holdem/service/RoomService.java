@@ -31,13 +31,15 @@ public class RoomService {
         return id.getId();
     }
 
-    public Optional<Room> getRoom(RoomId id){
-        if (rooms.containsKey(id))
-            return Optional.of(rooms.get(id));
+    public Optional<Room> getRoom(String id){
+        var roomId = new RoomId(id);
+        if (rooms.containsKey(roomId))
+            return Optional.of(rooms.get(roomId));
         return Optional.empty();
     }
 
-    public Optional<Room> deleteRoom(RoomId roomId){
+    public Optional<Room> deleteRoom(String id){
+        var roomId = new RoomId(id);
         return Optional.ofNullable(rooms.remove(roomId));
     }
 

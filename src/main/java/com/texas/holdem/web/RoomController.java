@@ -68,7 +68,7 @@ public class RoomController {
     //sprawdzanie czy pokój istnieje, jeśli tak odsyła id, front może subskrybować socket
     @GetMapping("/api/room/{roomId}")
     public ResponseEntity<RoomId> getRoomId(@PathVariable String roomId){
-        var res = roomService.getRoom(new RoomId(roomId));
+        var res = roomService.getRoom(roomId);
         if (res.isEmpty())
             return ResponseEntity.notFound().build();
         return ResponseEntity.ok(new RoomId(roomId));
@@ -77,7 +77,7 @@ public class RoomController {
     //usunięcie pokoju
     @DeleteMapping("/api/room/{roomId}")
     public ResponseEntity<?> deleteRoom(@PathVariable String roomId){
-        var res = roomService.deleteRoom(new RoomId(roomId));
+        var res = roomService.deleteRoom(roomId);
         if (res.isEmpty())
             return ResponseEntity.notFound().build();
         return ResponseEntity.ok().build();

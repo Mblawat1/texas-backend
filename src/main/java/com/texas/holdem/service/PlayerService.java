@@ -13,7 +13,7 @@ public class PlayerService {
     @Autowired
     RoomService roomService;
 
-    public HttpStatus addPlayer(RoomId roomId, PlayerDTO playerDTO){
+    public HttpStatus addPlayer(String roomId, PlayerDTO playerDTO){
         var optRoom = roomService.getRoom(roomId);
         if (optRoom.isEmpty())
             return HttpStatus.NOT_FOUND;
@@ -24,7 +24,7 @@ public class PlayerService {
         return HttpStatus.OK;
     }
 
-    public HttpStatus deletePlayer(RoomId roomId, int playerId) {
+    public HttpStatus deletePlayer(String roomId, int playerId) {
         var optRoom = roomService.getRoom(roomId);
         if (optRoom.isEmpty())
             return HttpStatus.NOT_FOUND;
@@ -33,7 +33,7 @@ public class PlayerService {
         return HttpStatus.OK;
     }
 
-    public HttpStatus setBet(RoomId roomId, int playerId, int bet) {
+    public HttpStatus setBet(String roomId, int playerId, int bet) {
         var optRoom = roomService.getRoom(roomId);
         if (optRoom.isEmpty())
             return HttpStatus.NOT_FOUND;
@@ -51,7 +51,7 @@ public class PlayerService {
         return HttpStatus.OK;
     }
 
-    public HttpStatus pass(RoomId roomId, int playerId) {
+    public HttpStatus pass(String roomId, int playerId) {
         var optRoom = roomService.getRoom(roomId);
         if (optRoom.isEmpty())
             return HttpStatus.NOT_FOUND;
