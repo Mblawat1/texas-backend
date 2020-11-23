@@ -63,6 +63,7 @@ public class PlayerController {
         return ResponseEntity.status(res).build();
     }
 
+    //zwiękasznie betów
     @PutMapping("/api/room/{roomId}/player/{playerId}")
     public ResponseEntity<?> placeBet(@PathVariable String roomId, @PathVariable int playerId,@RequestBody Amount amount){
         var res = playerService.setBet(roomId, playerId, amount.bet);
@@ -73,6 +74,7 @@ public class PlayerController {
         return ResponseEntity.status(res).build();
     }
 
+    //pasowanie
     @PutMapping("/api/room/{roomId}/player/{playerId}/pass")
     public ResponseEntity<?> pass(@PathVariable String roomId, @PathVariable int playerId){
         var res = playerService.pass(roomId, playerId);
