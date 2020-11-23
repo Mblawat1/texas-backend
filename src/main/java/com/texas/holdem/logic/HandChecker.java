@@ -70,7 +70,7 @@ public class HandChecker {
         return false;
     }
 
-    public boolean checkPari(ArrayList<Card> set) {
+    public boolean checkPair(ArrayList<Card> set) {
         return false;
     }
 
