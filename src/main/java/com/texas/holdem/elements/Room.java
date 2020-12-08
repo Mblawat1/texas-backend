@@ -73,8 +73,6 @@ public class Room {
             pla.setActive(true);
             players.set(pla.id, pla);
         }
-        //TODO Tutaj można dodać zakończenie rozdania jak już będzie logika
-
     }
 
     public void addCoinsInRound(int bet) {

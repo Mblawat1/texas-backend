@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class PlayerController {
 
-    static class Amount {
+    private static class Amount {
         private int bet;
 
         public Amount(int bet) {
@@ -27,6 +27,25 @@ public class PlayerController {
 
         public void setBet(int bet) {
             this.bet = bet;
+        }
+    }
+
+    private static class Winner {
+        private String nickname;
+
+        public Winner(String nickname) {
+            this.nickname = nickname;
+        }
+
+        public Winner() {
+        }
+
+        public String getNickname() {
+            return nickname;
+        }
+
+        public void setNickname(String nickname) {
+            this.nickname = nickname;
         }
     }
 
@@ -61,13 +80,16 @@ public class PlayerController {
         playerService.setBet(roomId, playerId, amount.bet);
         simpMessagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoom(roomId));
         return ResponseEntity.ok().build();
-
     }
 
     //pasowanie
     @PutMapping("/api/room/{roomId}/player/{playerId}/pass")
     public ResponseEntity<?> pass(@PathVariable String roomId, @PathVariable int playerId) {
         playerService.pass(roomId, playerId);
+        simpMessagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoom(roomId));
+
+        var winner = roomService.checkAllPassed(roomId);
+        simpMessagingTemplate.convertAndSend("/topic/room/" + roomId, new Winner(winner));
         simpMessagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoom(roomId));
         return ResponseEntity.ok().build();
     }

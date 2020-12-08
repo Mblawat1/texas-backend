@@ -86,6 +86,7 @@ public class PlayerService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "It isn't your turn");
 
         player.setPass(true);
+
         room.nextTurn(playerId);
 
     }

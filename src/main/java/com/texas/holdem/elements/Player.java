@@ -15,7 +15,7 @@ public class Player {
         this.budget = budget;
         this.holeSet = holeSet;
         pass = false;
-        active= id == 0;
+        active = false;
     }
 
     public int getId() {
@@ -75,10 +75,14 @@ public class Player {
     }
 
     public void addBet(int bet) {
-        this.bet+=bet;
+        this.bet += bet;
     }
 
     public void subBudget(int bet) {
-        budget-=bet;
+        budget -= bet;
+    }
+
+    public void addBudget(int prize) {
+        budget += prize;
     }
 }

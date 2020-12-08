@@ -3,11 +3,14 @@ package com.texas.holdem.service;
 import com.texas.holdem.elements.Room;
 import com.texas.holdem.elements.RoomId;
 import com.texas.holdem.elements.Table;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 public class RoomService {
@@ -52,5 +55,41 @@ public class RoomService {
         return new RoomId(sb.toString());
     }
 
+    public String checkAllPassed(String roomId) {
+        var optRoom = getRoom(roomId);
+        if (optRoom.isEmpty())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+
+        var room = optRoom.get();
+
+        var notPassed = room.getPlayers().stream().filter(n -> n.isPass()).collect(Collectors.toList());
+        if (notPassed.size() > 1)
+            throw new ResponseStatusException(HttpStatus.OK);
+
+        var winner = notPassed.get(0);
+        var prize = room.getTable().getCoinsInRound();
+
+        winner.addBudget(prize);
+        room.getPlayers().forEach(n -> {
+            n.setBet(0);
+            n.setPass(false);
+            n.setActive(false);
+        });
+        room.getTable().setCoinsInRound(0);
+
+        return winner.getNickname();
+    }
+
+    public void startRound(String roomId) {
+        var optRoom = getRoom(roomId);
+        if (optRoom.isEmpty())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+
+        var room = optRoom.get();
+
+        room.getPlayers().get(0).setActive(true);
+        
+        //TODO tutaj rozdawanie kart
+    }
 }
 

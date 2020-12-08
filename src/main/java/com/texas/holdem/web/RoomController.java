@@ -82,4 +82,11 @@ public class RoomController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/api/room/{roomId}/start")
+    public ResponseEntity<?> startRound(@PathVariable String roomId) {
+        roomService.startRound(roomId);
+        simpMessagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoom(roomId));
+        return ResponseEntity.ok().build();
+    }
+
 }
