@@ -1,10 +1,12 @@
 package com.texas.holdem.service;
 
+import com.texas.holdem.elements.Player;
 import com.texas.holdem.elements.PlayerDTO;
-import com.texas.holdem.elements.RoomId;
+import com.texas.holdem.elements.Room;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -13,56 +15,88 @@ public class PlayerService {
     @Autowired
     RoomService roomService;
 
-    public HttpStatus addPlayer(String roomId, PlayerDTO playerDTO){
+    public void addPlayer(String roomId, PlayerDTO playerDTO) {
         var optRoom = roomService.getRoom(roomId);
-        if (optRoom.isEmpty())
-            return HttpStatus.NOT_FOUND;
+        roomExists(optRoom);
+
         var room = optRoom.get();
         if (room.getPlayers().size() == 8)
-            return HttpStatus.BAD_REQUEST;
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Room is full");
+
         room.addPlayer(playerDTO);
-        return HttpStatus.OK;
     }
 
-    public HttpStatus deletePlayer(String roomId, int playerId) {
+    public void deletePlayer(String roomId, int playerId) {
         var optRoom = roomService.getRoom(roomId);
-        if (optRoom.isEmpty())
-            return HttpStatus.NOT_FOUND;
+        roomExists(optRoom);
+
         var room = optRoom.get();
+
+        var optPlayer = room.getPlayer(playerId);
+        playerExists(optPlayer);
+
+        var player = optPlayer.get();
+
+        if (player.isActive())
+            room.nextTurn(playerId);
         room.deletePlayer(playerId);
-        return HttpStatus.OK;
     }
 
-    public HttpStatus setBet(String roomId, int playerId, int bet) {
+    public void setBet(String roomId, int playerId, int bet) {
         var optRoom = roomService.getRoom(roomId);
-        if (optRoom.isEmpty())
-            return HttpStatus.NOT_FOUND;
-        var room = optRoom.get();
-        var player = room.getPlayers().get(playerId);
+        roomExists(optRoom);
 
-        if(player.isPass() || !player.isActive() || player.getBudget()<bet)
-            return HttpStatus.BAD_REQUEST;
+        var room = optRoom.get();
+
+        var optPlayer = room.getPlayer(playerId);
+        playerExists(optPlayer);
+
+        var player = optPlayer.get();
+
+        if (player.isPass())
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Player passed");
+
+        if (!player.isActive())
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "It isn't your turn");
+
+        if (player.getBudget() < bet)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Your budget is too low");
 
         player.addBet(bet);
         player.subBudget(bet);
         room.addCoinsInRound(bet);
 
         room.nextTurn(playerId);
-        return HttpStatus.OK;
     }
 
-    public HttpStatus pass(String roomId, int playerId) {
+    public void pass(String roomId, int playerId) {
         var optRoom = roomService.getRoom(roomId);
-        if (optRoom.isEmpty())
-            return HttpStatus.NOT_FOUND;
+        roomExists(optRoom);
         var room = optRoom.get();
-        var player = room.getPlayers().get(playerId);
 
-        if(player.isPass() || !player.isActive())
-            return HttpStatus.BAD_REQUEST;
+        var optPlayer = room.getPlayer(playerId);
+        playerExists(optPlayer);
+
+        var player = optPlayer.get();
+
+        if (player.isPass())
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Player passed");
+
+        if (!player.isActive())
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "It isn't your turn");
 
         player.setPass(true);
         room.nextTurn(playerId);
-        return HttpStatus.OK;
+
+    }
+
+    private void roomExists(Optional<Room> optRoom) {
+        if (optRoom.isEmpty())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Room not found");
+    }
+
+    private void playerExists(Optional<Player> optPlayer) {
+        if (optPlayer.isEmpty())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Player not found");
     }
 }

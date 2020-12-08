@@ -1,11 +1,9 @@
 package com.texas.holdem.web;
 
 import com.texas.holdem.elements.PlayerDTO;
-import com.texas.holdem.elements.RoomId;
 import com.texas.holdem.service.PlayerService;
 import com.texas.holdem.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class PlayerController {
 
-    static class Amount{
+    static class Amount {
         private int bet;
 
         public Amount(int bet) {
@@ -43,46 +41,35 @@ public class PlayerController {
 
     //dołączenie do pokoju
     @PostMapping("/api/room/{roomId}/player")
-    public ResponseEntity<?> joinRoom(@PathVariable String roomId, @RequestBody PlayerDTO player){
-        var res = playerService.addPlayer(roomId,player);
-        if (res == HttpStatus.OK){
-            simpMessagingTemplate.convertAndSend("/topic/room/"+roomId,roomService.getRoom(roomId));
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.status(res).build();
+    public ResponseEntity<?> joinRoom(@PathVariable String roomId, @RequestBody PlayerDTO player) {
+        playerService.addPlayer(roomId, player);
+        simpMessagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoom(roomId));
+        return ResponseEntity.ok().build();
     }
 
     //wyjście z pokoju
     @DeleteMapping("/api/room/{roomId}/player/{playerId}")
-    public ResponseEntity<?> leaveRoom(@PathVariable String roomId, @PathVariable int playerId){
-        var res = playerService.deletePlayer(roomId, playerId);
-        if (res == HttpStatus.OK){
-            simpMessagingTemplate.convertAndSend("/topic/room/"+roomId,roomService.getRoom(roomId));
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.status(res).build();
+    public ResponseEntity<?> leaveRoom(@PathVariable String roomId, @PathVariable int playerId) {
+        playerService.deletePlayer(roomId, playerId);
+        simpMessagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoom(roomId));
+        return ResponseEntity.noContent().build();
     }
 
     //zwiękasznie betów
     @PutMapping("/api/room/{roomId}/player/{playerId}")
-    public ResponseEntity<?> placeBet(@PathVariable String roomId, @PathVariable int playerId,@RequestBody Amount amount){
-        var res = playerService.setBet(roomId, playerId, amount.bet);
-        if (res == HttpStatus.OK){
-            simpMessagingTemplate.convertAndSend("/topic/room/"+roomId,roomService.getRoom(roomId));
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.status(res).build();
+    public ResponseEntity<?> placeBet(@PathVariable String roomId, @PathVariable int playerId, @RequestBody Amount amount) {
+        playerService.setBet(roomId, playerId, amount.bet);
+        simpMessagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoom(roomId));
+        return ResponseEntity.ok().build();
+
     }
 
     //pasowanie
     @PutMapping("/api/room/{roomId}/player/{playerId}/pass")
-    public ResponseEntity<?> pass(@PathVariable String roomId, @PathVariable int playerId){
-        var res = playerService.pass(roomId, playerId);
-        if (res == HttpStatus.OK){
-            simpMessagingTemplate.convertAndSend("/topic/room/"+roomId,roomService.getRoom(roomId));
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.status(res).build();
+    public ResponseEntity<?> pass(@PathVariable String roomId, @PathVariable int playerId) {
+        playerService.pass(roomId, playerId);
+        simpMessagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoom(roomId));
+        return ResponseEntity.ok().build();
     }
 
 }

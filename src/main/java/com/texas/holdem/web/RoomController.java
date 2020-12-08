@@ -1,6 +1,5 @@
 package com.texas.holdem.web;
 
-import com.texas.holdem.elements.PlayerDTO;
 import com.texas.holdem.elements.RoomId;
 import com.texas.holdem.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +21,7 @@ public class RoomController {
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
 
-    class SomeResponse{
+    class SomeResponse {
         private String text;
 
         public SomeResponse(String text) {
@@ -43,7 +42,7 @@ public class RoomController {
 
     @MessageMapping("/test")
     @SendTo("/test/return")
-    public String send(String str)throws Exception{
+    public String send(String str) throws Exception {
         return "Hej " + str;
     }
 
@@ -51,7 +50,7 @@ public class RoomController {
     @CrossOrigin("*")
     @MessageMapping("/room/{roomId}")
     @SendTo("/topic/room/{roomId}")
-    public Object sendRoom(@DestinationVariable String roomId, String msg){
+    public Object sendRoom(@DestinationVariable String roomId, String msg) {
         return new SomeResponse(msg);
     }
 
@@ -60,14 +59,14 @@ public class RoomController {
 
     //returnuje room id
     @PostMapping("/api/createRoom")
-    public ResponseEntity<RoomId> createRoom(){
+    public ResponseEntity<RoomId> createRoom() {
         String id = roomService.createRoom();
         return ResponseEntity.status(HttpStatus.CREATED).body(new RoomId(id));
     }
 
     //sprawdzanie czy pokój istnieje, jeśli tak odsyła id, front może subskrybować socket
     @GetMapping("/api/room/{roomId}")
-    public ResponseEntity<RoomId> getRoomId(@PathVariable String roomId){
+    public ResponseEntity<RoomId> getRoomId(@PathVariable String roomId) {
         var res = roomService.getRoom(roomId);
         if (res.isEmpty())
             return ResponseEntity.notFound().build();
@@ -76,11 +75,11 @@ public class RoomController {
 
     //usunięcie pokoju
     @DeleteMapping("/api/room/{roomId}")
-    public ResponseEntity<?> deleteRoom(@PathVariable String roomId){
+    public ResponseEntity<?> deleteRoom(@PathVariable String roomId) {
         var res = roomService.deleteRoom(roomId);
         if (res.isEmpty())
             return ResponseEntity.notFound().build();
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
 }

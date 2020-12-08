@@ -1,9 +1,7 @@
 package com.texas.holdem.elements;
 
-import org.springframework.beans.factory.annotation.Value;
-
 import java.util.ArrayList;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 public class Room {
     String id;
@@ -44,14 +42,18 @@ public class Room {
         this.table = table;
     }
 
-    public void addPlayer(PlayerDTO playerDTO){
-        players.add(new Player(players.size(),playerDTO.getNickname(),startingBudget,new HoleSet()));
+    public void addPlayer(PlayerDTO playerDTO) {
+        players.add(new Player(players.size(), playerDTO.getNickname(), startingBudget, new HoleSet()));
     }
 
-    public void deletePlayer(int id){
+    public void deletePlayer(int id) {
         players.remove(id);
-        for(int i=0;i<players.size();i++)
+        for (int i = 0; i < players.size(); i++)
             players.get(i).id = i;
+    }
+
+    public Optional<Player> getPlayer(int id) {
+        return players.stream().filter(n -> n.id == id).findFirst();
     }
 
     public void nextTurn(int playerId) {
@@ -60,16 +62,16 @@ public class Room {
         //szukam pierwszego aktywnego
         var lowerId = players.stream().filter(n -> !n.isPass()).findFirst();
         //szukam pierwszego aktywnego z wyższym id
-        var higherId = players.stream().filter(n -> !n.isPass() && n.id>playerId).findFirst();
+        var higherId = players.stream().filter(n -> !n.isPass() && n.id > playerId).findFirst();
         //jeśli jest z wyższym id to zmieniam jego
-        if(higherId.isPresent()){
+        if (higherId.isPresent()) {
             var pla = higherId.get();
             pla.setActive(true);
-            players.set(pla.id,pla);
-        }else if(lowerId.isPresent()){
+            players.set(pla.id, pla);
+        } else if (lowerId.isPresent()) {
             var pla = lowerId.get();
             pla.setActive(true);
-            players.set(pla.id,pla);
+            players.set(pla.id, pla);
         }
         //TODO Tutaj można dodać zakończenie rozdania jak już będzie logika
 
