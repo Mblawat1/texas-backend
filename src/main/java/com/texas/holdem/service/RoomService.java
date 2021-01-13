@@ -88,7 +88,11 @@ public class RoomService {
         var room = optRoom.get();
 
         room.getPlayers().get(0).setActive(true);
-        
+        //początkowe bety
+        room.getPlayers().forEach(n -> n.addBet(20));
+        room.getPlayers().forEach(n -> n.subBudget(20));
+        room.addCoinsInRound(room.getPlayers().size());
+
         //TODO tutaj rozdawanie kart
     }
 }
