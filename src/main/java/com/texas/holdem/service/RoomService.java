@@ -62,7 +62,7 @@ public class RoomService {
 
         var room = optRoom.get();
 
-        var notPassed = room.getPlayers().stream().filter(n -> n.isPass()).collect(Collectors.toList());
+        var notPassed = room.getPlayers().stream().filter(n -> !n.isPass()).collect(Collectors.toList());
         if (notPassed.size() > 1)
             throw new ResponseStatusException(HttpStatus.OK);
 
@@ -77,6 +77,8 @@ public class RoomService {
         });
         room.getTable().setCoinsInRound(0);
 
+        room.nextStarting();
+
         return winner.getNickname();
     }
 
@@ -87,11 +89,15 @@ public class RoomService {
 
         var room = optRoom.get();
 
-        room.getPlayers().get(0).setActive(true);
+        room.getPlayers().forEach(n -> {
+            if (n.isStarting()) {
+                n.setActive(true);
+            }
+        });
         //początkowe bety
         room.getPlayers().forEach(n -> n.addBet(20));
         room.getPlayers().forEach(n -> n.subBudget(20));
-        room.addCoinsInRound(room.getPlayers().size());
+        room.addCoinsInRound(room.getPlayers().size() * 20);
 
         //TODO tutaj rozdawanie kart
     }

@@ -1,5 +1,7 @@
 package com.texas.holdem.elements;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class Player {
     int id;
     String nickname;
@@ -8,6 +10,8 @@ public class Player {
     private int bet;
     private boolean pass;
     private boolean active;
+    @JsonIgnore
+    private boolean starting;
 
     public Player(int id, String nickname, int budget, HoleSet holeSet) {
         this.id = id;
@@ -16,6 +20,7 @@ public class Player {
         this.holeSet = holeSet;
         pass = false;
         active = false;
+        starting = false;
     }
 
     public int getId() {
@@ -84,5 +89,27 @@ public class Player {
 
     public void addBudget(int prize) {
         budget += prize;
+    }
+
+    public boolean isStarting() {
+        return starting;
+    }
+
+    public void setStarting(boolean starting) {
+        this.starting = starting;
+    }
+
+    @Override
+    public String toString() {
+        return "Player{" +
+                "id=" + id +
+                ", nickname='" + nickname + '\'' +
+                ", budget=" + budget +
+                ", holeSet=" + holeSet +
+                ", bet=" + bet +
+                ", pass=" + pass +
+                ", active=" + active +
+                ", starting=" + starting +
+                '}';
     }
 }

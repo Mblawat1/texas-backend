@@ -43,7 +43,10 @@ public class Room {
     }
 
     public void addPlayer(PlayerDTO playerDTO) {
-        players.add(new Player(players.size(), playerDTO.getNickname(), startingBudget, new HoleSet()));
+        var player = new Player(players.size(), playerDTO.getNickname(), startingBudget, new HoleSet());
+        if (player.getId() == 0)
+            player.setStarting(true);
+        players.add(player);
     }
 
     public void deletePlayer(int id) {
@@ -67,15 +70,27 @@ public class Room {
         if (higherId.isPresent()) {
             var pla = higherId.get();
             pla.setActive(true);
-            players.set(pla.id, pla);
+//            players.set(pla.id, pla);
         } else if (lowerId.isPresent()) {
             var pla = lowerId.get();
             pla.setActive(true);
-            players.set(pla.id, pla);
+//            players.set(pla.id, pla);
         }
     }
 
     public void addCoinsInRound(int bet) {
         table.addCoinsInRound(bet);
+    }
+
+    public void nextStarting() {
+        var startingPlayer = players.stream().filter(n -> n.isStarting()).findFirst().get();
+        startingPlayer.setStarting(false);
+
+        var higherPlayer = players.stream().filter(n -> n.getId() > startingPlayer.getId()).findFirst();
+        
+        if (higherPlayer.isPresent())
+            higherPlayer.get().setStarting(true);
+        else
+            players.get(0).setStarting(true);
     }
 }
