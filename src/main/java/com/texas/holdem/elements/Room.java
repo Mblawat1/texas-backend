@@ -1,5 +1,8 @@
 package com.texas.holdem.elements;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -67,12 +70,11 @@ public class Room {
     public void nextTurn(int playerId) {
         var optActivePlayer = players.stream().filter(n -> n.getId() == playerId).findFirst();
 
-//        if (!optActivePlayer.isEmpty())
-//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Player not found");
+        if (optActivePlayer.isEmpty())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Player not found");
 
         var activePlayer = optActivePlayer.get();
         activePlayer.setActive(false);
-        System.out.println(activePlayer);
         //szukam pierwszego aktywnego
         var lowerId = players.stream().filter(n -> !n.isPass()).findFirst();
         //szukam pierwszego aktywnego z wyższym id
