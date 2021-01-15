@@ -43,17 +43,21 @@ public class Room {
     }
 
     public int addPlayer(PlayerDTO playerDTO) {
-        var player = new Player(players.size(), playerDTO.getNickname(), startingBudget, new HoleSet());
-        if (player.getId() == 0)
-            player.setStarting(true);
+        int newPlayerId;
+        if (players.isEmpty())
+            newPlayerId = 1;
+        else
+            newPlayerId = players.get(players.size() - 1).getId() + 1;
+        var player = new Player(newPlayerId, playerDTO.getNickname(), startingBudget, new HoleSet());
         players.add(player);
-        return player.getId();
+
+        if (player.getId() == players.get(0).getId())
+            player.setStarting(true);
+        return newPlayerId;
     }
 
     public void deletePlayer(int id) {
-        players.remove(id);
-        for (int i = 0; i < players.size(); i++)
-            players.get(i).id = i;
+        players.removeIf(n -> n.getId() == id);
     }
 
     public Optional<Player> getPlayer(int id) {
@@ -61,8 +65,14 @@ public class Room {
     }
 
     public void nextTurn(int playerId) {
-        var activePlayer = players.get(playerId);
+        var optActivePlayer = players.stream().filter(n -> n.getId() == playerId).findFirst();
+
+//        if (!optActivePlayer.isEmpty())
+//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Player not found");
+
+        var activePlayer = optActivePlayer.get();
         activePlayer.setActive(false);
+        System.out.println(activePlayer);
         //szukam pierwszego aktywnego
         var lowerId = players.stream().filter(n -> !n.isPass()).findFirst();
         //szukam pierwszego aktywnego z wyższym id

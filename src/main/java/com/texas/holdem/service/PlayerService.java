@@ -20,7 +20,7 @@ public class PlayerService {
         roomExists(optRoom);
 
         var room = optRoom.get();
-        if (room.getPlayers().size() == 8)
+        if (room.getPlayers().size() == 6)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Room is full");
 
         return room.addPlayer(playerDTO);

@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin("*")
 @RestController
 public class PlayerController {
 
@@ -86,6 +87,7 @@ public class PlayerController {
     }
 
     //wyjście z pokoju
+    @CrossOrigin("*")
     @DeleteMapping("/api/room/{roomId}/player/{playerId}")
     public ResponseEntity<?> leaveRoom(@PathVariable String roomId, @PathVariable int playerId) {
         playerService.deletePlayer(roomId, playerId);
