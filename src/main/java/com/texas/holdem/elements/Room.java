@@ -42,11 +42,12 @@ public class Room {
         this.table = table;
     }
 
-    public void addPlayer(PlayerDTO playerDTO) {
+    public int addPlayer(PlayerDTO playerDTO) {
         var player = new Player(players.size(), playerDTO.getNickname(), startingBudget, new HoleSet());
         if (player.getId() == 0)
             player.setStarting(true);
         players.add(player);
+        return player.getId();
     }
 
     public void deletePlayer(int id) {
@@ -87,7 +88,7 @@ public class Room {
         startingPlayer.setStarting(false);
 
         var higherPlayer = players.stream().filter(n -> n.getId() > startingPlayer.getId()).findFirst();
-        
+
         if (higherPlayer.isPresent())
             higherPlayer.get().setStarting(true);
         else

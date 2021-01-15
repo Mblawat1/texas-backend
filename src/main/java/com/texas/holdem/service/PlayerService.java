@@ -15,7 +15,7 @@ public class PlayerService {
     @Autowired
     RoomService roomService;
 
-    public void addPlayer(String roomId, PlayerDTO playerDTO) {
+    public int addPlayer(String roomId, PlayerDTO playerDTO) {
         var optRoom = roomService.getRoom(roomId);
         roomExists(optRoom);
 
@@ -23,7 +23,7 @@ public class PlayerService {
         if (room.getPlayers().size() == 8)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Room is full");
 
-        room.addPlayer(playerDTO);
+        return room.addPlayer(playerDTO);
     }
 
     public void deletePlayer(String roomId, int playerId) {

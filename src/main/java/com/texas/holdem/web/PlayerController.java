@@ -30,6 +30,25 @@ public class PlayerController {
         }
     }
 
+    private static class Id {
+        private int id;
+
+        public Id(int id) {
+            this.id = id;
+        }
+
+        public Id() {
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+    }
+
     private static class Winner {
         private String nickname;
 
@@ -61,9 +80,9 @@ public class PlayerController {
     //dołączenie do pokoju
     @PostMapping("/api/room/{roomId}/player")
     public ResponseEntity<?> joinRoom(@PathVariable String roomId, @RequestBody PlayerDTO player) {
-        playerService.addPlayer(roomId, player);
+        var id = playerService.addPlayer(roomId, player);
         simpMessagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoom(roomId));
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(new Id(id));
     }
 
     //wyjście z pokoju
