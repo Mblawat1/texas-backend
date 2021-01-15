@@ -89,14 +89,25 @@ public class RoomService {
 
         var room = optRoom.get();
 
-        room.getPlayers().forEach(n -> {
+        var players = room.getPlayers();
+
+        if (players.size() < 2)
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Not enough players");
+
+        players.forEach(n -> {
             if (n.isStarting()) {
                 n.setActive(true);
             }
         });
         //początkowe bety
-        room.getPlayers().forEach(n -> n.addBet(20));
-        room.getPlayers().forEach(n -> n.subBudget(20));
+        players.stream().forEach(n -> {
+            if (n.isStarting())
+                n.setBet(100);
+        });
+
+        players.get(players.size() - 1).setBet(50);
+
+        players.forEach(n -> n.subBudget(20));
         room.addCoinsInRound(room.getPlayers().size() * 20);
 
         //TODO tutaj rozdawanie kart

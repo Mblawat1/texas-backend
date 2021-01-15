@@ -92,6 +92,11 @@ public class PlayerController {
     public ResponseEntity<?> leaveRoom(@PathVariable String roomId, @PathVariable int playerId) {
         playerService.deletePlayer(roomId, playerId);
         simpMessagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoom(roomId));
+
+        var playersInRoom = roomService.getRoom(roomId).get().getPlayers().size();
+        if (playersInRoom == 0)
+            roomService.deleteRoom(roomId);
+
         return ResponseEntity.noContent().build();
     }
 
