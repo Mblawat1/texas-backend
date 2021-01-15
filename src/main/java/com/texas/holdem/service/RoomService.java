@@ -101,14 +101,16 @@ public class RoomService {
         });
         //początkowe bety
         players.stream().forEach(n -> {
-            if (n.isStarting())
+            if (n.isStarting()) {
                 n.setBet(100);
+                n.subBudget(100);
+            }
         });
 
         players.get(players.size() - 1).setBet(50);
-
-        players.forEach(n -> n.subBudget(20));
-        room.addCoinsInRound(room.getPlayers().size() * 20);
+        players.get(players.size() - 1).subBudget(50);
+        
+        room.addCoinsInRound(150);
 
         //TODO tutaj rozdawanie kart
     }
