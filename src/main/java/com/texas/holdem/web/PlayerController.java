@@ -88,7 +88,7 @@ public class PlayerController {
 
     //wyjście z pokoju
     @CrossOrigin("*")
-    @DeleteMapping("/api/room/{roomId}/player/{playerId}")
+    @PostMapping("/api/room/{roomId}/player/{playerId}/delete")
     public ResponseEntity<?> leaveRoom(@PathVariable String roomId, @PathVariable int playerId) {
         playerService.deletePlayer(roomId, playerId);
         simpMessagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoom(roomId));
