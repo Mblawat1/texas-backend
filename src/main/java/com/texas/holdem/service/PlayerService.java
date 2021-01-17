@@ -55,8 +55,15 @@ public class PlayerService {
 
         var player = optPlayer.get();
 
-        var notPassed = room.getPlayers().stream().filter(n -> !n.isPass()).collect(Collectors.toList());
-        var maxBet = notPassed.stream().max(Comparator.comparingInt(Player::getBet)).map(n -> n.getBet()).get();
+        var players = room.getPlayers();
+
+        var notPassed = room.getPlayers()
+                .stream()
+                .filter(n -> !n.isPass())
+                .collect(Collectors.toList());
+        var maxBet = notPassed.stream()
+                .max(Comparator.comparingInt(Player::getBet))
+                .map(n -> n.getBet()).get();
 
         if (player.isPass())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Player passed");
@@ -70,14 +77,27 @@ public class PlayerService {
         if(player.getBet()+bet < maxBet)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Your bet is too low");
 
-        player.addBet(bet);
-        player.subBudget(bet);
-        room.addCoinsInRound(bet);
+        betHelper(player,room,bet);
 
-        if(notPassed.stream().allMatch(n -> n.getBet() == player.getBet()))
+        if(player.getBet() > maxBet)
             notPassed.forEach(n -> n.setCheck(false));
 
+        player.setCheck(true);
         room.nextTurn(playerId);
+
+        var checked = players.stream().filter(n -> n.isCheck()).count();
+        var commSet = room.getTable().getCommunitySet();
+        var deck = room.getDeck();
+
+        if(checked == notPassed.size() && commSet.size()<5){
+            if(commSet.size() == 0){
+                commSet.add(deck.getFirst());
+                commSet.add(deck.getFirst());
+            }
+            commSet.add(deck.getFirst());
+            players.forEach(n -> n.setCheck(false));
+        }
+
     }
 
     public void pass(String roomId, int playerId) {
@@ -101,43 +121,6 @@ public class PlayerService {
 
     }
 
-    public void check(String roomId, int playerId) {
-        var optRoom = roomService.getRoom(roomId);
-        roomExists(optRoom);
-        var room = optRoom.get();
-
-        var optPlayer = room.getPlayer(playerId);
-        playerExists(optPlayer);
-        var player = optPlayer.get();
-
-        var players = room.getPlayers();
-
-        var maxBet = players.stream().max(Comparator.comparingInt(Player::getBet)).map(n -> n.getBet()).get();
-
-        //nie można sprawdzać gdy bet danego gracza nie jest równy maksymalnemu
-        if (player.getBet() == maxBet) {
-            player.setCheck(true);
-            room.nextTurn(playerId);
-            var checked = players.stream().filter(n -> n.isCheck()).count();
-            var passed = players.stream().filter(n -> n.isPass()).count();
-            var commSet = room.getTable().getCommunitySet();
-            var deck = room.getDeck();
-
-            if(checked == players.size()-passed && commSet.size()<5){
-                if(commSet.size() == 0){
-                    commSet.add(deck.getFirst());
-                    commSet.add(deck.getFirst());
-                }
-                commSet.add(deck.getFirst());
-                players.forEach(n -> n.setCheck(false));
-            }
-
-            //TODO końcowe sprawdzenie kto wygrał
-        }
-        else
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Someone has higher bet than you");
-
-    }
 
     private void roomExists(Optional<Room> optRoom) {
         if (optRoom.isEmpty())
@@ -147,5 +130,11 @@ public class PlayerService {
     private void playerExists(Optional<Player> optPlayer) {
         if (optPlayer.isEmpty())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Player not found");
+    }
+
+    private void betHelper(Player player,Room room, int bet){
+        player.addBet(bet);
+        player.subBudget(bet);
+        room.addCoinsInRound(bet);
     }
 }

@@ -112,19 +112,10 @@ public class PlayerController {
     @PutMapping("/api/room/{roomId}/player/{playerId}/pass")
     public ResponseEntity<?> pass(@PathVariable String roomId, @PathVariable int playerId) {
         playerService.pass(roomId, playerId);
-        simpMessagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoom(roomId));
 
         var winner = roomService.checkAllPassed(roomId);
         simpMessagingTemplate.convertAndSend("/topic/room/" + roomId, new Winner(winner));
         simpMessagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoom(roomId));
-        return ResponseEntity.ok().build();
-    }
-
-    @PutMapping("/api/room/{roomId}/player/{playerId}/check")
-    public ResponseEntity<?> check(@PathVariable String roomId, @PathVariable int playerId) {
-        playerService.check(roomId, playerId);
-        simpMessagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoom(roomId));
-
         return ResponseEntity.ok().build();
     }
 

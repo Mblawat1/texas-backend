@@ -18,6 +18,7 @@ public class Player {
     private boolean active;
     @JsonIgnore
     private boolean starting;
+    @JsonIgnore
     private boolean check;
 
     public Player(int id, String nickname, int budget, HoleSet holeSet) {
