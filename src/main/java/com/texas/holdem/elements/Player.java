@@ -25,7 +25,7 @@ public class Player {
         this.nickname = nickname;
         this.budget = budget;
         this.holeSet = holeSet;
-        pass = false;
+        pass = true;
         active = false;
         starting = false;
         check = false;

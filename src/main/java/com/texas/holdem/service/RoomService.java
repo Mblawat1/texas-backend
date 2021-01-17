@@ -1,5 +1,6 @@
 package com.texas.holdem.service;
 
+import com.texas.holdem.elements.HoleSet;
 import com.texas.holdem.elements.Room;
 import com.texas.holdem.elements.RoomId;
 import com.texas.holdem.elements.Table;
@@ -95,14 +96,10 @@ public class RoomService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Not enough players");
 
         players.forEach(n -> {
+            n.setPass(false);
             if (n.isStarting()) {
                 n.setActive(true);
                 room.nextTurn(n.getId());
-            }
-        });
-        //początkowe bety
-        players.stream().forEach(n -> {
-            if (n.isStarting()) {
                 n.setBet(100);
                 n.subBudget(100);
             }
@@ -112,6 +109,11 @@ public class RoomService {
         players.get(players.size() - 1).subBudget(50);
         
         room.addCoinsInRound(150);
+
+        var deck = room.getDeck();
+        deck.shuffle();
+
+        players.forEach(n -> n.setHoleSet(new HoleSet(deck.getFirst(), deck.getFirst())));
 
         //TODO tutaj rozdawanie kart
     }

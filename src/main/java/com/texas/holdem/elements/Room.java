@@ -1,5 +1,6 @@
 package com.texas.holdem.elements;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
@@ -15,11 +16,14 @@ public class Room {
     ArrayList<Player> players;
     Table table;
     private int startingBudget = 5000;
+    @JsonIgnore
+    Deck deck;
 
     public Room(String id, Table table) {
         this.id = id;
         this.players = new ArrayList<Player>();
         this.table = table;
+        deck = new Deck();
     }
 
     public Room() {

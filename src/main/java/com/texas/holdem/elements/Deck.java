@@ -3,14 +3,16 @@ package com.texas.holdem.elements;
 import lombok.Getter;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
 
 @Getter
 public class Deck {
 
-    ArrayList<Card> deck;
+    LinkedList<Card> deck;
 
     public Deck() {
-        ArrayList<Card> newDeck = new ArrayList<>(52);
+        LinkedList<Card> newDeck = new LinkedList<Card>();
         for (int i = 2; i < 15; i++) {
             newDeck.add(new Card(i, "spade"));
             newDeck.add(new Card(i, "club"));
@@ -18,6 +20,17 @@ public class Deck {
             newDeck.add(new Card(i, "heart"));
         }
         this.deck = newDeck;
+    }
+
+    public void shuffle(){
+        Collections.shuffle(deck);
+    }
+
+    public Card getFirst(){
+        var card = deck.getFirst();
+        deck.removeFirst();
+        deck.addLast(card);
+        return card;
     }
 
 }
