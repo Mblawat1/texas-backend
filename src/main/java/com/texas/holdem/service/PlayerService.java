@@ -79,8 +79,11 @@ public class PlayerService {
 
         betHelper(player,room,bet);
 
-        if(player.getBet() > maxBet)
+        if(player.getBet() > maxBet) {
             notPassed.forEach(n -> n.setCheck(false));
+            player.setLastAction("raise");
+        }else
+            player.setLastAction("call");
 
         player.setCheck(true);
         room.nextTurn(playerId);
@@ -116,6 +119,8 @@ public class PlayerService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "It isn't your turn");
 
         player.setPass(true);
+
+        player.setLastAction("fold");
 
         room.nextTurn(playerId);
 

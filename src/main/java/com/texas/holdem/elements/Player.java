@@ -20,6 +20,7 @@ public class Player {
     private boolean starting;
     @JsonIgnore
     private boolean check;
+    private String lastAction;
 
     public Player(int id, String nickname, int budget, HoleSet holeSet) {
         this.id = id;
