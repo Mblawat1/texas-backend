@@ -1,7 +1,10 @@
 package com.texas.holdem.elements;
 
+import lombok.Getter;
+
 import java.util.ArrayList;
 
+@Getter
 public class Deck {
 
     ArrayList<Card> deck;
@@ -15,10 +18,6 @@ public class Deck {
             newDeck.add(new Card(i, "heart"));
         }
         this.deck = newDeck;
-    }
-
-    public ArrayList<Card> getDeck() {
-        return deck;
     }
 
 }

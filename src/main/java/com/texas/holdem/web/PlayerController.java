@@ -120,4 +120,12 @@ public class PlayerController {
         return ResponseEntity.ok().build();
     }
 
+    @PutMapping("/api/room/{roomId}/player/{playerId}/check")
+    public ResponseEntity<?> check(@PathVariable String roomId, @PathVariable int playerId) {
+        playerService.check(roomId, playerId);
+        simpMessagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoom(roomId));
+
+        return ResponseEntity.ok().build();
+    }
+
 }

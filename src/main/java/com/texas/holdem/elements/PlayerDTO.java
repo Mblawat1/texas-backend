@@ -1,20 +1,12 @@
 package com.texas.holdem.elements;
 
+import lombok.*;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
 public class PlayerDTO{
     private String nickname;
-
-    public String getNickname() {
-        return nickname;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
-    public PlayerDTO() {
-    }
-
-    public PlayerDTO(String nickname) {
-        this.nickname = nickname;
-    }
 }

@@ -97,6 +97,7 @@ public class RoomService {
         players.forEach(n -> {
             if (n.isStarting()) {
                 n.setActive(true);
+                room.nextTurn(n.getId());
             }
         });
         //początkowe bety

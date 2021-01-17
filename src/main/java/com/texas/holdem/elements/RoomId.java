@@ -1,31 +1,16 @@
 package com.texas.holdem.elements;
 
+import lombok.*;
+
 import java.util.Objects;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class RoomId {
     private String id;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public RoomId() {
-    }
-
-    public RoomId(String id) {
-        this.id = id;
-    }
-
-    @Override
-    public String toString() {
-        return "RoomId{" +
-                "id=" + id +
-                '}';
-    }
 
     @Override
     public boolean equals(Object o) {

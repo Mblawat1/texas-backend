@@ -1,11 +1,15 @@
 package com.texas.holdem.elements;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.Optional;
 
+@Getter
+@Setter
 public class Room {
     String id;
     ArrayList<Player> players;
@@ -19,30 +23,6 @@ public class Room {
     }
 
     public Room() {
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public ArrayList<Player> getPlayers() {
-        return players;
-    }
-
-    public void setPlayers(ArrayList<Player> players) {
-        this.players = players;
-    }
-
-    public Table getTable() {
-        return table;
-    }
-
-    public void setTable(Table table) {
-        this.table = table;
     }
 
     public int addPlayer(PlayerDTO playerDTO) {
@@ -83,11 +63,9 @@ public class Room {
         if (higherId.isPresent()) {
             var pla = higherId.get();
             pla.setActive(true);
-//            players.set(pla.id, pla);
         } else if (lowerId.isPresent()) {
             var pla = lowerId.get();
             pla.setActive(true);
-//            players.set(pla.id, pla);
         }
     }
 

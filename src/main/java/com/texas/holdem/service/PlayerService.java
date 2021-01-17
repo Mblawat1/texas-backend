@@ -8,7 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Comparator;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PlayerService {
@@ -53,6 +55,9 @@ public class PlayerService {
 
         var player = optPlayer.get();
 
+        var notPassed = room.getPlayers().stream().filter(n -> !n.isPass()).collect(Collectors.toList());
+        var maxBet = notPassed.stream().max(Comparator.comparingInt(Player::getBet)).map(n -> n.getBet()).get();
+
         if (player.isPass())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Player passed");
 
@@ -62,9 +67,15 @@ public class PlayerService {
         if (player.getBudget() < bet)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Your budget is too low");
 
+        if(player.getBet()+bet < maxBet)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Your bet is too low");
+
         player.addBet(bet);
         player.subBudget(bet);
         room.addCoinsInRound(bet);
+
+        if(notPassed.stream().allMatch(n -> n.getBet() == player.getBet()))
+            notPassed.forEach(n -> n.setCheck(false));
 
         room.nextTurn(playerId);
     }
@@ -76,11 +87,10 @@ public class PlayerService {
 
         var optPlayer = room.getPlayer(playerId);
         playerExists(optPlayer);
-
         var player = optPlayer.get();
 
         if (player.isPass())
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Player passed");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Player already passed");
 
         if (!player.isActive())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "It isn't your turn");
@@ -88,6 +98,30 @@ public class PlayerService {
         player.setPass(true);
 
         room.nextTurn(playerId);
+
+    }
+
+    public void check(String roomId, int playerId) {
+        var optRoom = roomService.getRoom(roomId);
+        roomExists(optRoom);
+        var room = optRoom.get();
+
+        var optPlayer = room.getPlayer(playerId);
+        playerExists(optPlayer);
+        var player = optPlayer.get();
+
+        var players = room.getPlayers();
+
+        var maxBet = players.stream().max(Comparator.comparingInt(Player::getBet)).map(n -> n.getBet()).get();
+
+        //nie można sprawdzać gdy bet danego gracza nie jest równy maksymalnemu
+        if (player.getBet() == maxBet) {
+            player.setCheck(true);
+            room.nextTurn(playerId);
+            //TODO nowa karta na środek gdy wszyscy zcheckowali
+        }
+        else
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Someone has higher bet than you");
 
     }
 

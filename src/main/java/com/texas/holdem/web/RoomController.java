@@ -21,37 +21,12 @@ public class RoomController {
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
 
-    class SomeResponse {
-        private String text;
-
-        public SomeResponse(String text) {
-            this.text = text;
-        }
-
-        public SomeResponse() {
-        }
-
-        public String getText() {
-            return text;
-        }
-
-        public void setText(String text) {
-            this.text = text;
-        }
-    }
-
-    @MessageMapping("/test")
-    @SendTo("/test/return")
-    public String send(String str) throws Exception {
-        return "Hej " + str;
-    }
-
     // send to musi być inny bo jeśli jest taki sam jak endpoint to klient odbiera też to co wysyła do servera
     @CrossOrigin("*")
     @MessageMapping("/room/{roomId}")
     @SendTo("/topic/room/{roomId}")
     public Object sendRoom(@DestinationVariable String roomId, String msg) {
-        return new SomeResponse(msg);
+        return msg;
     }
 
     //wysyłanie wiadomości nie w sockecie

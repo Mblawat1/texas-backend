@@ -1,7 +1,15 @@
 package com.texas.holdem.elements;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
 public class Table {
     @JsonIgnore
     String roomId;
@@ -12,21 +20,6 @@ public class Table {
         coinsInRound = 0;
     }
 
-    public String getRoomId() {
-        return roomId;
-    }
-
-    public void setRoomId(String roomId) {
-        this.roomId = roomId;
-    }
-
-    public int getCoinsInRound() {
-        return coinsInRound;
-    }
-
-    public void setCoinsInRound(int coinsInRound) {
-        this.coinsInRound = coinsInRound;
-    }
 
     public void addCoinsInRound(int bet) {
         coinsInRound += bet;
