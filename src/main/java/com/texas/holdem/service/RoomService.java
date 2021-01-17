@@ -1,13 +1,11 @@
 package com.texas.holdem.service;
 
-import com.texas.holdem.elements.HoleSet;
-import com.texas.holdem.elements.Room;
-import com.texas.holdem.elements.RoomId;
-import com.texas.holdem.elements.Table;
+import com.texas.holdem.elements.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.Random;
@@ -95,18 +93,27 @@ public class RoomService {
         if (players.size() < 2)
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Not enough players");
 
+        players.forEach(n -> n.setPass(false));
+
         players.forEach(n -> {
-            n.setPass(false);
             if (n.isStarting()) {
-                n.setActive(true);
                 room.nextTurn(n.getId());
                 n.setBet(100);
                 n.subBudget(100);
+
+                var lowestId = players.get(0).getId();
+                Player smallBlind;
+                if(n.getId() == lowestId) {
+                    smallBlind = players.get(players.size() - 1);
+                } else{
+                    smallBlind = players.stream()
+                            .filter(p -> p.getId() < n.getId())
+                            .max(Comparator.comparing(Player::getId)).get();
+                }
+                smallBlind.setBet(50);
+                smallBlind.subBudget(50);
             }
         });
-
-        players.get(players.size() - 1).setBet(50);
-        players.get(players.size() - 1).subBudget(50);
         
         room.addCoinsInRound(150);
 

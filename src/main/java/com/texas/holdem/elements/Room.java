@@ -59,7 +59,7 @@ public class Room {
 
         var activePlayer = optActivePlayer.get();
         activePlayer.setActive(false);
-        //szukam pierwszego aktywnego
+        //szukam pierwszego nie spasowanego
         var lowerId = players.stream().filter(n -> !n.isPass()).findFirst();
         //szukam pierwszego aktywnego z wyższym id
         var higherId = players.stream().filter(n -> !n.isPass() && n.id > playerId).findFirst();
