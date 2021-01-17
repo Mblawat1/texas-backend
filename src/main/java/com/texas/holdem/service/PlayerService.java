@@ -118,7 +118,21 @@ public class PlayerService {
         if (player.getBet() == maxBet) {
             player.setCheck(true);
             room.nextTurn(playerId);
-            //TODO nowa karta na środek gdy wszyscy zcheckowali
+            var checked = players.stream().filter(n -> n.isCheck()).count();
+            var passed = players.stream().filter(n -> n.isPass()).count();
+            var commSet = room.getTable().getCommunitySet();
+            var deck = room.getDeck();
+
+            if(checked == players.size()-passed && commSet.size()<5){
+                if(commSet.size() == 0){
+                    commSet.add(deck.getFirst());
+                    commSet.add(deck.getFirst());
+                }
+                commSet.add(deck.getFirst());
+                players.forEach(n -> n.setCheck(false));
+            }
+
+            //TODO końcowe sprawdzenie kto wygrał
         }
         else
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Someone has higher bet than you");

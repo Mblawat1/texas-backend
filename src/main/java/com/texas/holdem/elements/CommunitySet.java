@@ -12,4 +12,8 @@ import java.util.ArrayList;
 public class CommunitySet {
     ArrayList<Card> communitySet;
 
+    public void clear(){
+        communitySet = new ArrayList<>();
+    }
+
 }

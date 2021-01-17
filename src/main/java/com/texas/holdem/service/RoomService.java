@@ -78,6 +78,8 @@ public class RoomService {
 
         room.nextStarting();
 
+        room.getTable().getCommunitySet().clear();
+
         return winner.getNickname();
     }
 
@@ -121,8 +123,6 @@ public class RoomService {
         deck.shuffle();
 
         players.forEach(n -> n.setHoleSet(new HoleSet(deck.getFirst(), deck.getFirst())));
-
-        //TODO tutaj rozdawanie kart
     }
 }
 

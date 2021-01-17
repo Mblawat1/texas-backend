@@ -15,6 +15,7 @@ public class Room {
     String id;
     ArrayList<Player> players;
     Table table;
+    @JsonIgnore
     private int startingBudget = 5000;
     @JsonIgnore
     Deck deck;
