@@ -18,11 +18,13 @@ public class Table {
     private int coinsInRound;
     private ArrayList<Card> communitySet = new ArrayList<Card>();
     private String status;
+    private int maxBet;
 
     public Table(String roomId) {
         this.roomId = roomId;
         status = "lobby";
         coinsInRound = 0;
+        maxBet = 0;
     }
 
     public void addCoinsInRound(int bet) {

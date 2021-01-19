@@ -121,6 +121,8 @@ public class RoomService {
         players.forEach(n -> n.setHoleSet(new HoleSet(deck.getFirst(), deck.getFirst())));
 
         room.getTable().setStatus("game");
+
+        room.getTable().setMaxBet(bigBlind);
     }
 }
 

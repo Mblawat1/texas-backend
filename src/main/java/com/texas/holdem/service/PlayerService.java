@@ -62,6 +62,7 @@ public class PlayerService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Your bet is too low");
 
         betHelper(player,room,bet);
+        room.getTable().setMaxBet(player.getBet());
 
         if(player.getBet() > maxBet) {
             notPassed.forEach(n -> n.setCheck(false));
