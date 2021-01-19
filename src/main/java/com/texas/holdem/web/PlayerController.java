@@ -37,6 +37,7 @@ public class PlayerController {
     @AllArgsConstructor
     @NoArgsConstructor
     private static class Winner {
+        private String messageType;
         private String winner;
     }
 
@@ -54,7 +55,7 @@ public class PlayerController {
         playerService.pass(roomId, playerId);
 
         var winner = roomService.checkAllPassed(roomId);
-        simpMessagingTemplate.convertAndSend("/topic/room/" + roomId, new Winner(winner));
+        simpMessagingTemplate.convertAndSend("/topic/room/" + roomId, new Winner("winner",winner));
         simpMessagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
         return ResponseEntity.ok().build();
     }

@@ -12,6 +12,7 @@ import java.util.Optional;
 @Getter
 @Setter
 public class Room {
+    String messageType;
     String id;
     ArrayList<Player> players;
     Table table;
@@ -21,6 +22,7 @@ public class Room {
     Deck deck;
 
     public Room(String id, Table table) {
+        messageType = "roomStatus";
         this.id = id;
         this.players = new ArrayList<Player>();
         this.table = table;
