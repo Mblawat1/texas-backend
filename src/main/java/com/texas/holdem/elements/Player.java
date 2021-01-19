@@ -20,6 +20,7 @@ public class Player {
     private boolean starting;
     @JsonIgnore
     private boolean check;
+    private boolean ready;
     private String lastAction;
 
     public Player(int id, String nickname, int budget, HoleSet holeSet) {
@@ -31,6 +32,7 @@ public class Player {
         active = false;
         starting = false;
         check = false;
+        ready = false;
     }
 
     public void addBet(int bet) {

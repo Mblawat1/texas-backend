@@ -48,8 +48,11 @@ public class Room {
         players.removeIf(n -> n.getId() == id);
     }
 
-    public Optional<Player> getPlayer(int id) {
-        return players.stream().filter(n -> n.id == id).findFirst();
+    public Player getPlayerOrThrow(int id) {
+        return players.stream()
+                .filter(n -> n.id == id)
+                .findFirst()
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Player not found"));
     }
 
     public void nextTurn(int playerId) {

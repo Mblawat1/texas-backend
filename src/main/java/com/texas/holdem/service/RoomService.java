@@ -31,11 +31,13 @@ public class RoomService {
         return id.getId();
     }
 
-    public Optional<Room> getRoom(String id) {
+    //jeśli nie ma pokoju wywala exception
+    public Room getRoomOrThrow(String id) {
         var roomId = new RoomId(id);
         if (rooms.containsKey(roomId))
-            return Optional.of(rooms.get(roomId));
-        return Optional.empty();
+            return rooms.get(roomId);
+        else
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Room not found");
     }
 
     public Optional<Room> deleteRoom(String id) {
@@ -55,11 +57,7 @@ public class RoomService {
     }
 
     public String checkAllPassed(String roomId) {
-        var optRoom = getRoom(roomId);
-        if (optRoom.isEmpty())
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-
-        var room = optRoom.get();
+        var room = getRoomOrThrow(roomId);
 
         var notPassed = room.getPlayers().stream().filter(n -> !n.isPass()).collect(Collectors.toList());
         if (notPassed.size() > 1)
@@ -84,11 +82,7 @@ public class RoomService {
     }
 
     public void startRound(String roomId) {
-        var optRoom = getRoom(roomId);
-        if (optRoom.isEmpty())
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-
-        var room = optRoom.get();
+        var room = getRoomOrThrow(roomId);
 
         var players = room.getPlayers();
 

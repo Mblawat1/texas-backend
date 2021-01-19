@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Comparator;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -18,10 +17,7 @@ public class PlayerService {
     RoomService roomService;
 
     public int addPlayer(String roomId, PlayerDTO playerDTO) {
-        var optRoom = roomService.getRoom(roomId);
-        roomExists(optRoom);
-
-        var room = optRoom.get();
+        var room = roomService.getRoomOrThrow(roomId);
         if (room.getPlayers().size() == 6)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Room is full");
 
@@ -29,15 +25,9 @@ public class PlayerService {
     }
 
     public void deletePlayer(String roomId, int playerId) {
-        var optRoom = roomService.getRoom(roomId);
-        roomExists(optRoom);
+        var room = roomService.getRoomOrThrow(roomId);
 
-        var room = optRoom.get();
-
-        var optPlayer = room.getPlayer(playerId);
-        playerExists(optPlayer);
-
-        var player = optPlayer.get();
+        var player = room.getPlayerOrThrow(playerId);
 
         if (player.isActive())
             room.nextTurn(playerId);
@@ -45,15 +35,9 @@ public class PlayerService {
     }
 
     public void setBet(String roomId, int playerId, int bet) {
-        var optRoom = roomService.getRoom(roomId);
-        roomExists(optRoom);
+        var room = roomService.getRoomOrThrow(roomId);
 
-        var room = optRoom.get();
-
-        var optPlayer = room.getPlayer(playerId);
-        playerExists(optPlayer);
-
-        var player = optPlayer.get();
+        var player = room.getPlayerOrThrow(playerId);
 
         var players = room.getPlayers();
 
@@ -104,13 +88,9 @@ public class PlayerService {
     }
 
     public void pass(String roomId, int playerId) {
-        var optRoom = roomService.getRoom(roomId);
-        roomExists(optRoom);
-        var room = optRoom.get();
+        var room = roomService.getRoomOrThrow(roomId);
 
-        var optPlayer = room.getPlayer(playerId);
-        playerExists(optPlayer);
-        var player = optPlayer.get();
+        var player = room.getPlayerOrThrow(playerId);
 
         if (player.isPass())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Player already passed");
@@ -126,15 +106,7 @@ public class PlayerService {
 
     }
 
-
-    private void roomExists(Optional<Room> optRoom) {
-        if (optRoom.isEmpty())
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Room not found");
-    }
-
-    private void playerExists(Optional<Player> optPlayer) {
-        if (optPlayer.isEmpty())
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Player not found");
+    public void setReady(String roomId, int playerId) {
     }
 
     private void betHelper(Player player,Room room, int bet){
@@ -142,4 +114,5 @@ public class PlayerService {
         player.subBudget(bet);
         room.addCoinsInRound(bet);
     }
+
 }
