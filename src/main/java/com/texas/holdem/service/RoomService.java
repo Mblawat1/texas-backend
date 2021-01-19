@@ -78,6 +78,8 @@ public class RoomService {
 
         room.getTable().getCommunitySet().clear();
 
+        startRound(roomId);
+
         return winner.getNickname();
     }
 

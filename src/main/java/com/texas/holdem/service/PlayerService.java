@@ -118,10 +118,9 @@ public class PlayerService {
 
         var ready = players.stream().filter(n -> n.isReady()).count();
 
-        if(ready == players.size()) {
+        if(ready == players.size())
             roomService.startRound(roomId);
-            players.forEach(n -> n.setReady(false));
-        }
+
     }
 
     private void betHelper(Player player,Room room, int bet){
