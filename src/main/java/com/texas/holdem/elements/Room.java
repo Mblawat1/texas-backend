@@ -31,7 +31,7 @@ public class Room {
     }
 
     public int addPlayer(PlayerDTO playerDTO) {
-        if(playerDTO.getAvatar() > 10 || playerDTO.getAvatar() < 0)
+        if(playerDTO.getAvatar() > 16 || playerDTO.getAvatar() < 0)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Avatar number is not in range");
         int newPlayerId;
         if (players.isEmpty())

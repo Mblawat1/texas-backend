@@ -10,5 +10,5 @@ import lombok.*;
 public class PlayerDTO{
     private String nickname;
 
-    private int avatar = 1;
+    private int avatar = 0;
 }
