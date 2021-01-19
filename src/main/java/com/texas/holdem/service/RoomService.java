@@ -87,7 +87,7 @@ public class RoomService {
         var players = room.getPlayers();
 
         if (players.size() < 2)
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Not enough players");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough players");
 
         players.forEach(n -> n.setPass(false));
 
@@ -119,6 +119,8 @@ public class RoomService {
         deck.shuffle();
 
         players.forEach(n -> n.setHoleSet(new HoleSet(deck.getFirst(), deck.getFirst())));
+
+        room.getTable().setStatus("game");
     }
 }
 

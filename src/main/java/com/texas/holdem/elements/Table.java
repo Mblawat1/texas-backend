@@ -17,9 +17,11 @@ public class Table {
     String roomId;
     private int coinsInRound;
     private ArrayList<Card> communitySet = new ArrayList<Card>();
+    private String status;
 
     public Table(String roomId) {
         this.roomId = roomId;
+        status = "lobby";
         coinsInRound = 0;
     }
 
