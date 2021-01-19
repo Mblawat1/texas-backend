@@ -91,11 +91,13 @@ public class RoomService {
 
         players.forEach(n -> n.setPass(false));
 
+        var bigBlind = room.getStartingBudget()/10;
+
         players.forEach(n -> {
             if (n.isStarting()) {
                 room.nextTurn(n.getId());
-                n.setBet(100);
-                n.subBudget(100);
+                n.setBet(bigBlind);
+                n.subBudget(bigBlind);
 
                 var lowestId = players.get(0).getId();
                 Player smallBlind;
@@ -106,12 +108,12 @@ public class RoomService {
                             .filter(p -> p.getId() < n.getId())
                             .max(Comparator.comparing(Player::getId)).get();
                 }
-                smallBlind.setBet(50);
-                smallBlind.subBudget(50);
+                smallBlind.setBet(bigBlind/2);
+                smallBlind.subBudget(bigBlind/2);
             }
         });
         
-        room.addCoinsInRound(150);
+        room.addCoinsInRound(bigBlind + bigBlind/2);
 
         var deck = room.getDeck();
         deck.shuffle();
