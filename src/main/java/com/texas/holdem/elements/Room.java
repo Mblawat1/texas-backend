@@ -48,6 +48,7 @@ public class Room {
         players.removeIf(n -> n.getId() == id);
     }
 
+    //jeśli nie ma gracza wywala exception
     public Player getPlayerOrThrow(int id) {
         return players.stream()
                 .filter(n -> n.id == id)

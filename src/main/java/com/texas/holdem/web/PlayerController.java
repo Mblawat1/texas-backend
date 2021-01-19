@@ -15,6 +15,15 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class PlayerController {
 
+    @Autowired
+    PlayerService playerService;
+
+    @Autowired
+    RoomService roomService;
+
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
+
     @Getter
     @Setter
     @AllArgsConstructor
@@ -30,15 +39,6 @@ public class PlayerController {
     private static class Winner {
         private String winner;
     }
-
-    @Autowired
-    PlayerService playerService;
-
-    @Autowired
-    RoomService roomService;
-
-    @Autowired
-    private SimpMessagingTemplate simpMessagingTemplate;
 
     //zwiękasznie betów
     @PutMapping("/api/room/{roomId}/player/{playerId}")
@@ -63,6 +63,7 @@ public class PlayerController {
     public ResponseEntity<?> playerReady(@PathVariable String roomId, @PathVariable int playerId){
         playerService.setReady(roomId,playerId);
 
+        simpMessagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
         return ResponseEntity.ok().build();
     }
 

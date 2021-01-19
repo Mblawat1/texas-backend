@@ -107,6 +107,20 @@ public class PlayerService {
     }
 
     public void setReady(String roomId, int playerId) {
+        var room = roomService.getRoomOrThrow(roomId);
+
+        var player = room.getPlayerOrThrow(playerId);
+
+        player.setReady(!player.isReady());
+
+        var players = room.getPlayers();
+
+        var ready = players.stream().filter(n -> n.isReady()).count();
+
+        if(ready == players.size()) {
+            roomService.startRound(roomId);
+            players.forEach(n -> n.setReady(false));
+        }
     }
 
     private void betHelper(Player player,Room room, int bet){
