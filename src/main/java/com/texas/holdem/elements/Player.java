@@ -14,6 +14,7 @@ public class Player {
     int budget;
     HoleSet holeSet;
     private int bet;
+    private int avatar;
     private boolean pass;
     private boolean active;
     @JsonIgnore
@@ -23,11 +24,12 @@ public class Player {
     private boolean ready;
     private String lastAction;
 
-    public Player(int id, String nickname, int budget, HoleSet holeSet) {
+    public Player(int id, String nickname, int budget,int avatar, HoleSet holeSet) {
         this.id = id;
         this.nickname = nickname;
         this.budget = budget;
         this.holeSet = holeSet;
+        this.avatar = avatar;
         pass = true;
         active = false;
         starting = false;

@@ -9,4 +9,6 @@ import lombok.*;
 @ToString
 public class PlayerDTO{
     private String nickname;
+
+    private int avatar = 1;
 }

@@ -31,12 +31,14 @@ public class Room {
     }
 
     public int addPlayer(PlayerDTO playerDTO) {
+        if(playerDTO.getAvatar() > 10 || playerDTO.getAvatar() < 0)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Avatar number is not in range");
         int newPlayerId;
         if (players.isEmpty())
             newPlayerId = 1;
         else
             newPlayerId = players.get(players.size() - 1).getId() + 1;
-        var player = new Player(newPlayerId, playerDTO.getNickname(), startingBudget, new HoleSet());
+        var player = new Player(newPlayerId, playerDTO.getNickname(), startingBudget, playerDTO.getAvatar(), new HoleSet());
         players.add(player);
 
         if (player.getId() == players.get(0).getId())
