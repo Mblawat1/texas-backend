@@ -53,6 +53,7 @@ public class PlayerController {
     @PutMapping("/api/room/{roomId}/player/{playerId}/pass")
     public ResponseEntity<?> pass(@PathVariable String roomId, @PathVariable int playerId) {
         playerService.pass(roomId, playerId);
+        simpMessagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
 
         var winner = roomService.checkAllPassed(roomId);
         simpMessagingTemplate.convertAndSend("/topic/room/" + roomId, new Winner("winner",winner));
