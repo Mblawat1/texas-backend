@@ -9,9 +9,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 
-public class HandChecker {
+public class HandAnalyzer {
 
-    public HandChecker() { }
+    public HandAnalyzer() { }
 
     public String translateHand(int handNumber) {
         String handName = new String();
@@ -36,6 +36,7 @@ public class HandChecker {
         ArrayList<Card> set = makeSet(holeSet, communitySet);
         return hand;
     }
+
 
     public boolean checkRoyalFlush(ArrayList<Card> set) {
 
