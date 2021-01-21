@@ -29,11 +29,14 @@ public class HoldemApplication {
         test.add(new Card(10, "sadajb"));
         test.add(new Card(10, "sadajh"));
         test.add(new Card(5, "sbhsb"));
+        test.add(new Card(11, "dbhsjh"));
+        test.add(new Card(11, "sdfsf"));
+        test.add(new Card(11, "sdfsf"));
 
         SetCombsCounter counter = new SetCombsCounter();
-        System.out.println(counter.getPairCount(test));
-        System.out.println(counter.getTriplesCount(test));
-        System.out.println(counter.getQuadsCount(test));
+        System.out.println(counter.getNCount(test, 2));
+        System.out.println(counter.getNCount(test, 3) + " triples");
+        System.out.println(counter.getNCount(test, 4));
 
     }
 

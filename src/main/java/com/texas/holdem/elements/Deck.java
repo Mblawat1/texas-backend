@@ -1,12 +1,17 @@
 package com.texas.holdem.elements;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 
 @Getter
+@Setter
+@AllArgsConstructor
 public class Deck {
 
     LinkedList<Card> deck;
