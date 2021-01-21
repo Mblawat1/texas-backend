@@ -87,14 +87,14 @@ public class HandAnalyzer {
     public Card checkHighCard(HoleSet holeSet, CommunitySet communitySet) {
         Card highCard = new Card();
         for (Card c: communitySet.getCommunitySet()) {
-            if (highCard.getNumber() <= c.getNumber()) {
+            if (highCard.getRank() <= c.getRank()) {
                 highCard = c;
             }
         }
-        if (highCard.getNumber() <= holeSet.getHoleCard1().getNumber()) {
+        if (highCard.getRank() <= holeSet.getHoleCard1().getRank()) {
             highCard = holeSet.getHoleCard1();
         }
-        if (highCard.getNumber() <= holeSet.getHoleCard2().getNumber()) {
+        if (highCard.getRank() <= holeSet.getHoleCard2().getRank()) {
             highCard = holeSet.getHoleCard2();
         }
         return highCard;
@@ -109,7 +109,7 @@ public class HandAnalyzer {
         }
         Collections.sort(set, new Comparator<Card>() {
             public int compare(Card c1, Card c2) {
-                return Integer.valueOf(c2.getNumber()).compareTo(c1.getNumber());
+                return Integer.valueOf(c2.getRank()).compareTo(c1.getRank());
             }
         });
         return set;
