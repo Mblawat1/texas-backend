@@ -50,6 +50,7 @@ public class HandAnalyzer {
         else return 10;
     }
 
+    //to be done by a map/pair
     public boolean isRoyalFlush(ArrayList<Card> set) { return false; }
 
     public boolean isStraightFlush(ArrayList<Card> set) {
