@@ -10,7 +10,7 @@ import lombok.*;
 public class HandOutcome {
 
     private int handValue;
-    private int highestIncluded;
+    private int highestIncluded; //also the rank of three of a kind in the full house
     private int secondHighestIncluded;
     private int singleHighest;
 

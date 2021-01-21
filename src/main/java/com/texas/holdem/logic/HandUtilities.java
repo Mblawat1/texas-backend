@@ -110,6 +110,59 @@ public class HandUtilities {
                 .build());
     }
 
+    public HandOutcome checkFullHouse(ArrayList<Card> fiveHandSet) {
+        HandOutcome pairOutcome = checkPair(fiveHandSet);
+        HandOutcome threeOutcome = checkThreeOfAKind(fiveHandSet);
+        int singleHighest = 0;
+        if (pairOutcome.getSingleHighest() <= threeOutcome.getSingleHighest()) { singleHighest = threeOutcome.getSingleHighest(); }
+        else singleHighest = pairOutcome.getSingleHighest();
+        if(pairOutcome.getHandValue() == 9 && threeOutcome.getHandValue() == 7 && pairOutcome.getHighestIncluded() != threeOutcome.getHighestIncluded()) {
+            HandOutcome outcome = new HandOutcome.Builder(4)
+                    .withSingleHighest(singleHighest)
+                    .withHighestIncluded(threeOutcome.getHighestIncluded())
+                    .build();
+            return outcome;
+        }
+        else return (new HandOutcome.Builder(0)
+                .withSingleHighest(singleHighest)
+                .build());
+    }
+
+    public HandOutcome checkFlush(ArrayList<Card> fiveHandSet) {
+        ArrayList<Integer> ranks = sortSet(fiveHandSet);
+        boolean ifRightSuit = checkSuitsEquality(fiveHandSet);
+        if(ifRightSuit) {
+            HandOutcome outcome = new HandOutcome.Builder(5)
+                    .withSingleHighest(ranks.get(4))
+                    .withHighestIncluded(ranks.get(4))
+                    .withNextHighestIncluded(ranks.get(3))
+                    .build();
+            return outcome;
+        }
+        else return (new HandOutcome.Builder(0)
+                .withSingleHighest(ranks.get(4))
+                .build());
+    }
+
+    public HandOutcome checkStraight(ArrayList<Card> fiveHandSet) {
+        ArrayList<Integer> ranks = sortSet(fiveHandSet);
+        int startRank = ranks.get(0);
+        boolean ifRightRanks = false;
+        if((ranks.get(1) == (startRank + 1)) && (ranks.get(2) == (startRank + 2))
+                && (ranks.get(3) == (startRank + 3)) && (ranks.get(4) == (startRank + 4)))
+        { ifRightRanks = true; }
+        if(ifRightRanks) {
+            HandOutcome outcome = new HandOutcome.Builder(6)
+                    .withSingleHighest(ranks.get(4))
+                    .withHighestIncluded(ranks.get(4))
+                    .build();
+            return outcome;
+        }
+        else return (new HandOutcome.Builder(0)
+                .withSingleHighest(ranks.get(4))
+                .build());
+    }
+
     public HandOutcome checkThreeOfAKind(ArrayList<Card> fiveHandSet) {
         List<Integer> nCount = getNCount(fiveHandSet, 3);
         if(nCount.get(nCount.size()-1) == 1) {
