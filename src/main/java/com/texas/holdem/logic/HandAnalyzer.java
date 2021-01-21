@@ -37,41 +37,50 @@ public class HandAnalyzer {
         return hand;
     }
 
+    public int getHandValue(ArrayList<Card> set) {
+        if(isRoyalFlush(set)) return 1;
+        else if(isStraightFlush(set)) return 2;
+        else if(isFourOfAKind(set)) return 3;
+        else if(isFullHouse(set)) return 4;
+        else if(isFlush(set)) return 5;
+        else if(isStraight(set)) return 6;
+        else if(isThree(set)) return 7;
+        else if(isTwoPairs(set)) return 8;
+        else if(isPair(set)) return 9;
+        else return 10;
+    }
 
-    public boolean checkRoyalFlush(ArrayList<Card> set) {
+    public boolean isRoyalFlush(ArrayList<Card> set) { return false; }
 
+    public boolean isStraightFlush(ArrayList<Card> set) {
         return false;
     }
 
-    public boolean checkStraightFlush(ArrayList<Card> set) {
+    public boolean isFourOfAKind(ArrayList<Card> set) {
         return false;
     }
 
-    public boolean checkFour(ArrayList<Card> set) {
+    public boolean isFullHouse(ArrayList<Card> set) {
         return false;
     }
 
-    public boolean checkFullHouse(ArrayList<Card> set) {
+    public boolean isFlush(ArrayList<Card> set) {
         return false;
     }
 
-    public boolean checkFlush(ArrayList<Card> set) {
+    public boolean isStraight(ArrayList<Card> set) {
         return false;
     }
 
-    public boolean checkStraight(ArrayList<Card> set) {
+    public boolean isThree(ArrayList<Card> set) {
         return false;
     }
 
-    public boolean checkThree(ArrayList<Card> set) {
+    public boolean isTwoPairs(ArrayList<Card> set) {
         return false;
     }
 
-    public boolean checkTwoPairs(ArrayList<Card> set) {
-        return false;
-    }
-
-    public boolean checkPair(ArrayList<Card> set) {
+    public boolean isPair(ArrayList<Card> set) {
         return false;
     }
 
