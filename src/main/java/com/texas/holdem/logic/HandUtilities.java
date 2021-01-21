@@ -43,22 +43,27 @@ public class HandUtilities {
         return findings;
     }
 
+    public boolean checkSuitsEquality(ArrayList<Card> set) {
+        String suit = set.get(0).getSuit();
+        boolean ifRightSuit = true;
+        for (int i = 1; i < 5; i++) {
+            if (!(set.get(i).getSuit().equals(suit))) {
+                ifRightSuit = false;
+                break;
+            }
+        }
+        return ifRightSuit;
+    }
+
 
     public HandOutcome checkRoyalFlush(ArrayList<Card> fiveHandSet) {
         ArrayList<Integer> ranks = sortSet(fiveHandSet);
-        String suit = fiveHandSet.get(0).getSuit();
-        boolean ifRightRanks = false;
+        boolean ifRightRanks = checkSuitsEquality(fiveHandSet);
         boolean ifRightSuit = true;
         if(ranks.get(4) == 14 && ranks.get(3) == 13
                 && ranks.get(2) == 12 && ranks.get(1) == 11
                 && ranks.get(0) == 10)
         { ifRightRanks = true; }
-        for (int i = 1; i < 5; i++) {
-            if (!(fiveHandSet.get(i).getSuit().equals(suit))) {
-                ifRightSuit = false;
-                break;
-            }
-        }
         if(ifRightSuit && ifRightRanks) {
             HandOutcome outcome = new HandOutcome.Builder(1)
                     .withSingleHighest(14)
@@ -66,7 +71,43 @@ public class HandUtilities {
                     .build();
             return outcome;
         }
-        else return new HandOutcome.Builder(0).build();
+        else return (new HandOutcome.Builder(0)
+                .withSingleHighest(ranks.get(4))
+                .build());
+    }
+
+    public HandOutcome checkStraightFlush(ArrayList<Card> fiveHandSet) {
+        ArrayList<Integer> ranks = sortSet(fiveHandSet);
+        int startRank = ranks.get(0);
+        boolean ifRightRanks = false;
+        boolean ifRightSuit = checkSuitsEquality(fiveHandSet);
+        if((ranks.get(1) == (startRank + 1)) && (ranks.get(2) == (startRank + 2))
+                && (ranks.get(3) == (startRank + 3)) && (ranks.get(4) == (startRank + 4)))
+        { ifRightRanks = true; }
+        if(ifRightSuit && ifRightRanks) {
+            HandOutcome outcome = new HandOutcome.Builder(2)
+                    .withSingleHighest(ranks.get(4))
+                    .withHighestIncluded(ranks.get(4))
+                    .build();
+            return outcome;
+        }
+        else return (new HandOutcome.Builder(0)
+                .withSingleHighest(ranks.get(4))
+                .build());
+    }
+
+    public HandOutcome checkFourOfAKind(ArrayList<Card> fiveHandSet) {
+        List<Integer> nCount = getNCount(fiveHandSet, 4);
+        if(nCount.get(nCount.size()-1) == 1) {
+            HandOutcome outcome = new HandOutcome.Builder(3)
+                    .withSingleHighest(nCount.get(0))
+                    .withHighestIncluded(nCount.get(1))
+                    .build();
+            return outcome;
+        }
+        else return (new HandOutcome.Builder(0)
+                .withSingleHighest(nCount.get(0))
+                .build());
     }
 
     public HandOutcome checkThreeOfAKind(ArrayList<Card> fiveHandSet) {
@@ -78,7 +119,9 @@ public class HandUtilities {
                     .build();
             return outcome;
         }
-        else return new HandOutcome.Builder(0).build();
+        else return (new HandOutcome.Builder(0)
+                .withSingleHighest(nCount.get(0))
+                .build());
     }
 
     public HandOutcome checkTwoPairs(ArrayList<Card> fiveHandSet) {
@@ -91,7 +134,9 @@ public class HandUtilities {
                     .build();
             return outcome;
         }
-        else return new HandOutcome.Builder(0).build();
+        else return (new HandOutcome.Builder(0)
+                .withSingleHighest(nCount.get(0))
+                .build());
     }
 
     public HandOutcome checkPair(ArrayList<Card> fiveHandSet) {
@@ -103,6 +148,8 @@ public class HandUtilities {
                     .build();
             return outcome;
         }
-        else return new HandOutcome.Builder(0).build();
+        else return (new HandOutcome.Builder(0)
+                .withSingleHighest(nCount.get(0))
+                .build());
     }
 }

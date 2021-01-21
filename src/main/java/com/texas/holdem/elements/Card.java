@@ -8,8 +8,8 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 public class Card {
-    int rank;
-    String suit;
+    private int rank;
+    private String suit;
 
     public int compareCards(Card first, Card second) {
         int elderCard = 0;
