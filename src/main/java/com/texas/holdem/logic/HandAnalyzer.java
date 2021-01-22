@@ -80,7 +80,6 @@ public class HandAnalyzer {
         ArrayList<Card> finalWinningHand = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
             HandOutcome outcome = getHandOutcome(playerSets.get(i));
-            System.out.println("From function " + outcome.getHandValue() + " " + outcome.getHighestIncluded());
             if (outcome.getHandValue() == 9) {
                 outcome.setBestSet(playerSets.get(i));
                 return outcome;
@@ -103,8 +102,8 @@ public class HandAnalyzer {
         }
         return new HandOutcome.Builder(finalHandValue)
                 .withHighestIncluded(finalHighestIncluded)
-                .withSingleHighest(finalSingleHighest)
                 .withBestSet(finalWinningHand)
+                .withSingleHighest(finalSingleHighest)
                 .build();
     }
 

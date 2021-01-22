@@ -56,13 +56,14 @@ public class HandUtilities {
 
     public HandOutcome checkRoyalFlush(ArrayList<Card> fiveHandSet) {
         ArrayList<Integer> ranks = sortSet(fiveHandSet);
-        boolean ifRightRanks = checkSuitsEquality(fiveHandSet);
-        boolean ifRightSuit = true;
+        boolean ifRightSuit = checkSuitsEquality(fiveHandSet);
+        boolean ifRightRanks = false;
         if(ranks.get(4) == 14 && ranks.get(3) == 13
                 && ranks.get(2) == 12 && ranks.get(1) == 11
                 && ranks.get(0) == 10)
         { ifRightRanks = true; }
         if(ifRightSuit && ifRightRanks) {
+            System.out.println(ranks);
             HandOutcome outcome = new HandOutcome.Builder(9)
                     .withSingleHighest(14)
                     .withHighestIncluded(14)
@@ -110,14 +111,11 @@ public class HandUtilities {
 
     public HandOutcome checkFullHouse(ArrayList<Card> fiveHandSet) {
         HandOutcome pairOutcome = checkPair(fiveHandSet);
-        System.out.println("Pair on "+ pairOutcome.getHighestIncluded());
         HandOutcome threeOutcome = checkThreeOfAKind(fiveHandSet);
-        System.out.println("Three on " + threeOutcome.getHighestIncluded());
         int singleHighest = 0;
         if (pairOutcome.getSingleHighest() <= threeOutcome.getSingleHighest()) { singleHighest = threeOutcome.getSingleHighest(); }
         else singleHighest = pairOutcome.getSingleHighest();
         if(pairOutcome.getHandValue() == 1 && threeOutcome.getHandValue() == 3 && pairOutcome.getHighestIncluded() != threeOutcome.getHighestIncluded()) {
-            System.out.println("FULL HOUSE FOUND");
             HandOutcome outcome = new HandOutcome.Builder(6)
                     .withSingleHighest(singleHighest)
                     .withHighestIncluded(threeOutcome.getHighestIncluded())

@@ -56,6 +56,7 @@ public class HandOutcome {
             handOutcome.highestIncluded = this.highestIncluded;
             handOutcome.secondHighestIncluded = this.secondHighestIncluded;
             handOutcome.singleHighest = this.singleHighest;
+            handOutcome.bestSet = this.bestSet;
             return handOutcome;
         }
     }
