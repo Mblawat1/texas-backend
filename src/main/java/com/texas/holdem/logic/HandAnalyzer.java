@@ -80,15 +80,31 @@ public class HandAnalyzer {
         ArrayList<Card> finalWinningHand = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
             HandOutcome outcome = getHandOutcome(playerSets.get(i));
+            if (outcome.getHandValue() == 9) {
+                outcome.setBestSet(playerSets.get(i));
+                return outcome;
+            }
             if (outcome.getHandValue() > finalHandValue) {
                 finalHandValue = outcome.getHandValue();
                 finalHighestIncluded = outcome.getHighestIncluded();
                 finalSingleHighest = outcome.getSingleHighest();
                 finalWinningHand = playerSets.get(i);
             }
-            else if (outcome.getHandValue() == finalHandValue && outcome.getHighestIncluded() <)
+            else if (outcome.getHandValue() == finalHandValue && outcome.getHighestIncluded() > finalHighestIncluded) {
+                finalHighestIncluded = outcome.getHighestIncluded();
+                finalSingleHighest = outcome.getSingleHighest();
+                finalWinningHand = playerSets.get(i);
+            }
+            else if (outcome.getHandValue() == finalHandValue && outcome.getHighestIncluded() == finalHighestIncluded && outcome.getSingleHighest() > finalSingleHighest) {
+                finalSingleHighest = outcome.getSingleHighest();
+                finalWinningHand = playerSets.get(i);
+            }
         }
-        return new HandOutcome.Builder(finalHandValue).build();
+        return new HandOutcome.Builder(finalHandValue)
+                .withHighestIncluded(finalHighestIncluded)
+                .withSingleHighest(finalSingleHighest)
+                .withBestSet(finalWinningHand)
+                .build();
     }
 
 }
