@@ -6,34 +6,31 @@ import com.texas.holdem.elements.cards.CommunitySet;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class HandAnalyzer {
+
+    HandUtilities utility = new HandUtilities();
 
     public HandAnalyzer() { }
 
     public String translateHand(int handNumber) {
         String handName = new String();
         HashMap<Integer, String> hierarchy = new HashMap<Integer, String>();
-        hierarchy.put(1, "ROYAL_FLUSH");
-        hierarchy.put(2, "STRAIGHT_FLUSH");
-        hierarchy.put(3, "FOUR_OF_A_KIND");
-        hierarchy.put(4, "FULL_HOUSE");
+        hierarchy.put(0, "HIGH_CARD");
+        hierarchy.put(1, "PAIR");
+        hierarchy.put(2, "TWO_PAIR");
+        hierarchy.put(3, "THREE_OF_A_KIND");
+        hierarchy.put(4, "STRAIGHT");
         hierarchy.put(5, "FLUSH");
-        hierarchy.put(6, "STRAIGHT");
-        hierarchy.put(7, "THREE_OF_A_KIND");
-        hierarchy.put(8, "TWO_PAIR");
-        hierarchy.put(9, "PAIR");
-        hierarchy.put(10, "HIGH_CARD");
+        hierarchy.put(6, "FULL_HOUSE");
+        hierarchy.put(7, "FOUR_OF_A_KIND");
+        hierarchy.put(8, "STRAIGHT_FLUSH");
+        hierarchy.put(9, "ROYAL_FLUSH");
         handName = hierarchy.get(handNumber);
         return handName;
     }
 
-    public int checkHand(HoleSet holeSet, CommunitySet communitySet) {
-        int hand = 0;
-        Card highCard = checkHighCard(holeSet, communitySet);
-        ArrayList<Card> set = makeFiveHandSet(holeSet, communitySet);
-        return hand;
-    }
 
     public int getHandValue(ArrayList<Card> set) {
         if(isRoyalFlush(set)) return 1;
@@ -83,35 +80,34 @@ public class HandAnalyzer {
         return false;
     }
 
-    public Card checkHighCard(HoleSet holeSet, CommunitySet communitySet) {
+    public int checkHighCard(ArrayList<Card> set) {
         Card highCard = new Card();
-        for (Card c: communitySet.getCommunitySet()) {
-            if (highCard.getRank() <= c.getRank()) {
-                highCard = c;
-            }
-        }
-        if (highCard.getRank() <= holeSet.getHoleCard1().getRank()) {
-            highCard = holeSet.getHoleCard1();
-        }
-        if (highCard.getRank() <= holeSet.getHoleCard2().getRank()) {
-            highCard = holeSet.getHoleCard2();
-        }
-        return highCard;
+        ArrayList<Integer> sortedSet = utility.sortSet(set);
+        return sortedSet.get(sortedSet.size()-1);
     }
 
-    public ArrayList<Card> makeFiveHandSet(HoleSet holeSet, CommunitySet communitySet) {
-        ArrayList<Card> set = new ArrayList<>(7);
-        set.add(holeSet.getHoleCard1());
-        set.add(holeSet.getHoleCard2());
-        /*for (Card c: communitySet.getCommunitySet()) {
-            set.add(c);
+    public ArrayList<Card> makeSet(HoleSet holeSet, CommunitySet communitySet) {
+        ArrayList<Card> totalSet = new ArrayList<>();
+        totalSet.add(holeSet.getHoleCard1());
+        totalSet.add(holeSet.getHoleCard2());
+        totalSet.addAll(communitySet.getCommunitySet());
+        return totalSet;
+    }
+
+    public List<ArrayList<Card>> makeFiveHandSets(ArrayList<Card> set) {
+        ArrayList<Card> fiveHandSet = new ArrayList<>();
+        List<ArrayList<Card>> sets = new ArrayList<>();
+        String[] allPerms = "01234,01235,01236,01245,01246,01256,01345,01346,01356,01456,02345,02346,02356,02456,03456,12345,12346,12356,12456,13456".split(",");
+        for (int i = 0; i < 20; i++) {
+            String currentPerm = allPerms[i];
+            fiveHandSet.add(set.get(currentPerm.charAt(0)));
+            fiveHandSet.add(set.get(currentPerm.charAt(1)));
+            fiveHandSet.add(set.get(currentPerm.charAt(2)));
+            fiveHandSet.add(set.get(currentPerm.charAt(3)));
+            fiveHandSet.add(set.get(currentPerm.charAt(4)));
+            sets.add(fiveHandSet);
         }
-        Collections.sort(set, new Comparator<Card>() {
-            public int compare(Card c1, Card c2) {
-                return Integer.valueOf(c2.getRank()).compareTo(c1.getRank());
-            }
-        });*/
-        return set;
+        return sets;
     }
 
 }
