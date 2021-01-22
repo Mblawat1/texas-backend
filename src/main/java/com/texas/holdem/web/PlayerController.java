@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin("*")
 @RestController
 public class PlayerController {
 
@@ -53,7 +52,6 @@ public class PlayerController {
      * @return HttpStatus.OK jeśli wszystko ok, inne błędy jeśli coś nie zadziałało
      */
     //zwiękasznie betów
-    @CrossOrigin("*")
     @PutMapping("/api/room/{roomId}/player/{playerId}")
     public ResponseEntity<?> placeBet(@PathVariable String roomId, @PathVariable int playerId, @RequestBody Amount amount) {
         playerService.setBet(roomId, playerId, amount.bet);
@@ -68,7 +66,6 @@ public class PlayerController {
      * @param playerId Id gracza
      * @return HttpStatus.OK jeśli wszystko ok, inne błędy jeśli coś nie zadziałało
      */
-    @CrossOrigin("*")
     @PutMapping("/api/room/{roomId}/player/{playerId}/pass")
     public ResponseEntity<?> pass(@PathVariable String roomId, @PathVariable int playerId) {
         playerService.pass(roomId, playerId);
@@ -88,7 +85,6 @@ public class PlayerController {
      * @param playerId Id gracza
      * @return HttpStatus.OK jeśli wszystko ok, inne błędy jeśli coś nie zadziałało
      */
-    @CrossOrigin("*")
     @PutMapping("/api/room/{roomId}/player/{playerId}/ready")
     public ResponseEntity<?> playerReady(@PathVariable String roomId, @PathVariable int playerId) {
         playerService.setReady(roomId, playerId);

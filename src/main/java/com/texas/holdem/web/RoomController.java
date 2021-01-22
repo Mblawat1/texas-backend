@@ -92,7 +92,6 @@ public class RoomController {
      *               }
      * @return Id utworzonego gracza, błędy jeśli coś nie zadziałało
      */
-    @CrossOrigin("*")
     @PostMapping("/api/room/{roomId}/player")
     public ResponseEntity<?> joinRoom(@PathVariable String roomId, @RequestBody PlayerDTO player) {
         var id = roomService.addPlayer(roomId, player);
@@ -106,7 +105,6 @@ public class RoomController {
      * @param playerId Id gracza
      * @return HttpStatus.OK jeśli wszystko ok, inne błędy jeśli coś nie zadziałało
      */
-    @CrossOrigin("*")
     @PostMapping("/api/room/{roomId}/player/{playerId}/delete")
     public ResponseEntity<?> leaveRoom(@PathVariable String roomId, @PathVariable int playerId) {
         roomService.deletePlayer(roomId, playerId);
