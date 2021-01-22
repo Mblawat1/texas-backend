@@ -92,6 +92,7 @@ public class RoomController {
      *               }
      * @return Id utworzonego gracza, błędy jeśli coś nie zadziałało
      */
+    @CrossOrigin("*")
     @PostMapping("/api/room/{roomId}/player")
     public ResponseEntity<?> joinRoom(@PathVariable String roomId, @RequestBody PlayerDTO player) {
         var id = roomService.addPlayer(roomId, player);

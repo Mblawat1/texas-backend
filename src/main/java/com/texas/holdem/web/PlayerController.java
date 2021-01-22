@@ -43,15 +43,17 @@ public class PlayerController {
 
     /**
      * <h3>Bettowanie</h3>
-     * @param roomId Id pokoju
+     *
+     * @param roomId   Id pokoju
      * @param playerId Id gracza
-     * @param amount JSON <br/>
-     * {<br/>
-     *               "bet" : 10<br/>
-     * }<br/>
+     * @param amount   JSON <br/>
+     *                 {<br/>
+     *                 "bet" : 10<br/>
+     *                 }<br/>
      * @return HttpStatus.OK jeśli wszystko ok, inne błędy jeśli coś nie zadziałało
      */
     //zwiękasznie betów
+    @CrossOrigin("*")
     @PutMapping("/api/room/{roomId}/player/{playerId}")
     public ResponseEntity<?> placeBet(@PathVariable String roomId, @PathVariable int playerId, @RequestBody Amount amount) {
         playerService.setBet(roomId, playerId, amount.bet);
@@ -61,30 +63,35 @@ public class PlayerController {
 
     /**
      * <h3>Passowanie</h3>
-     * @param roomId Id pokoju
+     *
+     * @param roomId   Id pokoju
      * @param playerId Id gracza
      * @return HttpStatus.OK jeśli wszystko ok, inne błędy jeśli coś nie zadziałało
      */
+    @CrossOrigin("*")
     @PutMapping("/api/room/{roomId}/player/{playerId}/pass")
     public ResponseEntity<?> pass(@PathVariable String roomId, @PathVariable int playerId) {
         playerService.pass(roomId, playerId);
 
         var winner = roomService.checkAllPassed(roomId);
-        winner.ifPresent(win -> messagingTemplate.convertAndSend("/topic/room/" + roomId, new Winner("winner",win)));
+        winner.ifPresent(win -> messagingTemplate.convertAndSend("/topic/room/" + roomId, new Winner("winner", win)));
 
         messagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
 
         return ResponseEntity.ok().build();
     }
 
-     /**<h3>Zmiana gotowości gracza</h3>
-     * @param roomId Id pokoju
+    /**
+     * <h3>Zmiana gotowości gracza</h3>
+     *
+     * @param roomId   Id pokoju
      * @param playerId Id gracza
      * @return HttpStatus.OK jeśli wszystko ok, inne błędy jeśli coś nie zadziałało
      */
+    @CrossOrigin("*")
     @PutMapping("/api/room/{roomId}/player/{playerId}/ready")
-    public ResponseEntity<?> playerReady(@PathVariable String roomId, @PathVariable int playerId){
-        playerService.setReady(roomId,playerId);
+    public ResponseEntity<?> playerReady(@PathVariable String roomId, @PathVariable int playerId) {
+        playerService.setReady(roomId, playerId);
 
         messagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
         return ResponseEntity.ok().build();
