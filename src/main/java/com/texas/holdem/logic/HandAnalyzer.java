@@ -3,10 +3,9 @@ package com.texas.holdem.logic;
 import com.texas.holdem.elements.cards.Card;
 import com.texas.holdem.elements.cards.HoleSet;
 import com.texas.holdem.elements.cards.CommunitySet;
+import javafx.util.Pair;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class HandAnalyzer {
 
@@ -32,56 +31,20 @@ public class HandAnalyzer {
     }
 
 
-    public int getHandValue(ArrayList<Card> set) {
-        if(isRoyalFlush(set)) return 1;
-        else if(isStraightFlush(set)) return 2;
-        else if(isFourOfAKind(set)) return 3;
-        else if(isFullHouse(set)) return 4;
-        else if(isFlush(set)) return 5;
-        else if(isStraight(set)) return 6;
-        else if(isThree(set)) return 7;
-        else if(isTwoPairs(set)) return 8;
-        else if(isPair(set)) return 9;
-        else return 10;
-    }
-
-    //to be done by a map/pair
-    public boolean isRoyalFlush(ArrayList<Card> set) { return false; }
-
-    public boolean isStraightFlush(ArrayList<Card> set) {
-        return false;
-    }
-
-    public boolean isFourOfAKind(ArrayList<Card> set) {
-        return false;
-    }
-
-    public boolean isFullHouse(ArrayList<Card> set) {
-        return false;
-    }
-
-    public boolean isFlush(ArrayList<Card> set) {
-        return false;
-    }
-
-    public boolean isStraight(ArrayList<Card> set) {
-        return false;
-    }
-
-    public boolean isThree(ArrayList<Card> set) {
-        return false;
-    }
-
-    public boolean isTwoPairs(ArrayList<Card> set) {
-        return false;
-    }
-
-    public boolean isPair(ArrayList<Card> set) {
-        return false;
+    public HandOutcome getHandOutcome(ArrayList<Card> set) {
+        if (utility.checkRoyalFlush(set).getHandValue() == 9) return utility.checkRoyalFlush(set);
+        else if (utility.checkRoyalFlush(set).getHandValue() == 8) return utility.checkStraightFlush(set);
+        else if (utility.checkRoyalFlush(set).getHandValue() == 7) return utility.checkFourOfAKind(set);
+        else if (utility.checkRoyalFlush(set).getHandValue() == 6) return utility.checkFullHouse(set);
+        else if (utility.checkRoyalFlush(set).getHandValue() == 5) return utility.checkFlush(set);
+        else if (utility.checkRoyalFlush(set).getHandValue() == 4) return utility.checkStraight(set);
+        else if (utility.checkRoyalFlush(set).getHandValue() == 3) return utility.checkThreeOfAKind(set);
+        else if (utility.checkRoyalFlush(set).getHandValue() == 2) return utility.checkTwoPairs(set);
+        else if (utility.checkRoyalFlush(set).getHandValue() == 1) return utility.checkPair(set);
+        else return new HandOutcome.Builder(0).withSingleHighest(checkHighCard(set)).build();
     }
 
     public int checkHighCard(ArrayList<Card> set) {
-        Card highCard = new Card();
         ArrayList<Integer> sortedSet = utility.sortSet(set);
         return sortedSet.get(sortedSet.size()-1);
     }
@@ -108,6 +71,24 @@ public class HandAnalyzer {
             sets.add(fiveHandSet);
         }
         return sets;
+    }
+
+    public HandOutcome getPlayersWinningHand(List<ArrayList<Card>> playerSets) {
+        int finalHandValue = 0;
+        int finalSingleHighest = 0;
+        int finalHighestIncluded = 0;
+        ArrayList<Card> finalWinningHand = new ArrayList<>();
+        for (int i = 0; i < 20; i++) {
+            HandOutcome outcome = getHandOutcome(playerSets.get(i));
+            if (outcome.getHandValue() > finalHandValue) {
+                finalHandValue = outcome.getHandValue();
+                finalHighestIncluded = outcome.getHighestIncluded();
+                finalSingleHighest = outcome.getSingleHighest();
+                finalWinningHand = playerSets.get(i);
+            }
+            else if (outcome.getHandValue() == finalHandValue && outcome.getHighestIncluded() <)
+        }
+        return new HandOutcome.Builder(finalHandValue).build();
     }
 
 }

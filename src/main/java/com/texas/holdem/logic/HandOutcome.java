@@ -1,6 +1,9 @@
 package com.texas.holdem.logic;
 
+import com.texas.holdem.elements.cards.Card;
 import lombok.*;
+
+import java.util.ArrayList;
 
 @Getter
 @Setter
@@ -13,6 +16,7 @@ public class HandOutcome {
     private int highestIncluded; //also the rank of three of a kind in the full house
     private int secondHighestIncluded;
     private int singleHighest;
+    private ArrayList<Card> bestSet;
 
     public static class Builder {
 
@@ -20,6 +24,7 @@ public class HandOutcome {
         private int highestIncluded;
         private int secondHighestIncluded;
         private int singleHighest;
+        private ArrayList<Card> bestSet;
 
         public Builder(int handValue) {
             this.handValue = handValue;
@@ -37,6 +42,11 @@ public class HandOutcome {
 
         public Builder withSingleHighest(int singleHighest) {
             this.singleHighest = singleHighest;
+            return this;
+        }
+
+        public Builder withBestSet(ArrayList<Card> bestSet) {
+            this.bestSet = bestSet;
             return this;
         }
 
