@@ -28,7 +28,7 @@ public class RoomController {
     PlayerService playerService;
 
     @Autowired
-    private SimpMessagingTemplate simpMessagingTemplate;
+    private SimpMessagingTemplate messagingTemplate;
 
     @Getter
     @Setter
@@ -49,14 +49,21 @@ public class RoomController {
     //wysyłanie wiadomości nie w sockecie
     //simpMessagingTemplate.convertAndSend("/topic/room/"+id,new SomeResponse("xd"));
 
-    //returnuje room id
+    /**
+     * <h3>Tworzenie nowego pokoju</h3>
+     * @return Id utworzonego pokoju
+     */
     @PostMapping("/api/createRoom")
     public ResponseEntity<RoomId> createRoom() {
         String id = roomService.createRoom();
         return ResponseEntity.status(HttpStatus.CREATED).body(new RoomId(id));
     }
 
-    //sprawdzanie czy pokój istnieje, jeśli tak odsyła id, front może subskrybować socket
+    /**
+     * <h3>Sprawdzenie czy pokój istnieje</h3>
+     * @param roomId Id pokoju
+     * @return Id pokoju jeśli istnieje, jeśli nie status 404
+     */
     @GetMapping("/api/room/{roomId}")
     public ResponseEntity<RoomId> getRoomId(@PathVariable String roomId) {
         var res = roomService.getRoomOrThrow(roomId);
@@ -64,13 +71,13 @@ public class RoomController {
     }
 
     //usunięcie pokoju
-    @DeleteMapping("/api/room/{roomId}")
-    public ResponseEntity<?> deleteRoom(@PathVariable String roomId) {
-        var res = roomService.deleteRoom(roomId);
-        if (res.isEmpty())
-            return ResponseEntity.notFound().build();
-        return ResponseEntity.noContent().build();
-    }
+//    @DeleteMapping("/api/room/{roomId}")
+//    public ResponseEntity<?> deleteRoom(@PathVariable String roomId) {
+//        var res = roomService.deleteRoom(roomId);
+//        if (res.isEmpty())
+//            return ResponseEntity.notFound().build();
+//        return ResponseEntity.noContent().build();
+//    }
 
 //    @GetMapping("/api/room/{roomId}/start")
 //    public ResponseEntity<?> startRound(@PathVariable String roomId) {
@@ -79,21 +86,34 @@ public class RoomController {
 //        return ResponseEntity.ok().build();
 //    }
 
-
-    //dołączenie do pokoju
+    /**
+     * <h3>Dołączanie do pokoju</h3>
+     * @param roomId Id pokoju
+     * @param player Json<br/>
+     *               {<br/>
+     *                   "nickname" : "andrzej",<br/>
+     *                   "avatar" : 13<br/>
+     *               }
+     * @return Id utworzonego gracza, błędy jeśli coś nie zadziałało
+     */
     @PostMapping("/api/room/{roomId}/player")
     public ResponseEntity<?> joinRoom(@PathVariable String roomId, @RequestBody PlayerDTO player) {
         var id = playerService.addPlayer(roomId, player);
-        simpMessagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
+        messagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
         return ResponseEntity.ok().body(new Id(id));
     }
 
-    //wyjście z pokoju
+    /**
+     * <h3>Wyjście z pokoju</h3>
+     * @param roomId Id pokoju
+     * @param playerId Id gracza
+     * @return HttpStatus.OK jeśli wszystko ok, inne błędy jeśli coś nie zadziałało
+     */
     @CrossOrigin("*")
     @PostMapping("/api/room/{roomId}/player/{playerId}/delete")
     public ResponseEntity<?> leaveRoom(@PathVariable String roomId, @PathVariable int playerId) {
         playerService.deletePlayer(roomId, playerId);
-        simpMessagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
+        messagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
 
         var playersInRoom = roomService.getRoomOrThrow(roomId).getPlayers().size();
         if (playersInRoom == 0)

@@ -22,7 +22,7 @@ public class PlayerController {
     RoomService roomService;
 
     @Autowired
-    private SimpMessagingTemplate simpMessagingTemplate;
+    private SimpMessagingTemplate messagingTemplate;
 
     @Getter
     @Setter
@@ -41,31 +41,51 @@ public class PlayerController {
         private String winner;
     }
 
+    /**
+     * <h3>Bettowanie</h3>
+     * @param roomId Id pokoju
+     * @param playerId Id gracza
+     * @param amount JSON <br/>
+     * {<br/>
+     *               "bet" : 10<br/>
+     * }<br/>
+     * @return HttpStatus.OK jeśli wszystko ok, inne błędy jeśli coś nie zadziałało
+     */
     //zwiękasznie betów
     @PutMapping("/api/room/{roomId}/player/{playerId}")
     public ResponseEntity<?> placeBet(@PathVariable String roomId, @PathVariable int playerId, @RequestBody Amount amount) {
         playerService.setBet(roomId, playerId, amount.bet);
-        simpMessagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
+        messagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
         return ResponseEntity.ok().build();
     }
 
-    //pasowanie
+    /**
+     * <h3>Passowanie</h3>
+     * @param roomId Id pokoju
+     * @param playerId Id gracza
+     * @return HttpStatus.OK jeśli wszystko ok, inne błędy jeśli coś nie zadziałało
+     */
     @PutMapping("/api/room/{roomId}/player/{playerId}/pass")
     public ResponseEntity<?> pass(@PathVariable String roomId, @PathVariable int playerId) {
         playerService.pass(roomId, playerId);
-        simpMessagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
+        messagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
 
         var winner = roomService.checkAllPassed(roomId);
-        simpMessagingTemplate.convertAndSend("/topic/room/" + roomId, new Winner("winner",winner));
-        simpMessagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
+        messagingTemplate.convertAndSend("/topic/room/" + roomId, new Winner("winner",winner));
+        messagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
         return ResponseEntity.ok().build();
     }
 
+     /**<h3>Zmiana gotowości gracza</h3>
+     * @param roomId Id pokoju
+     * @param playerId Id gracza
+     * @return HttpStatus.OK jeśli wszystko ok, inne błędy jeśli coś nie zadziałało
+     */
     @PutMapping("/api/room/{roomId}/player/{playerId}/ready")
     public ResponseEntity<?> playerReady(@PathVariable String roomId, @PathVariable int playerId){
         playerService.setReady(roomId,playerId);
 
-        simpMessagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
+        messagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
         return ResponseEntity.ok().build();
     }
 
