@@ -33,14 +33,14 @@ public class HandAnalyzer {
 
     public HandOutcome getHandOutcome(ArrayList<Card> set) {
         if (utility.checkRoyalFlush(set).getHandValue() == 9) return utility.checkRoyalFlush(set);
-        else if (utility.checkRoyalFlush(set).getHandValue() == 8) return utility.checkStraightFlush(set);
-        else if (utility.checkRoyalFlush(set).getHandValue() == 7) return utility.checkFourOfAKind(set);
-        else if (utility.checkRoyalFlush(set).getHandValue() == 6) return utility.checkFullHouse(set);
-        else if (utility.checkRoyalFlush(set).getHandValue() == 5) return utility.checkFlush(set);
-        else if (utility.checkRoyalFlush(set).getHandValue() == 4) return utility.checkStraight(set);
-        else if (utility.checkRoyalFlush(set).getHandValue() == 3) return utility.checkThreeOfAKind(set);
-        else if (utility.checkRoyalFlush(set).getHandValue() == 2) return utility.checkTwoPairs(set);
-        else if (utility.checkRoyalFlush(set).getHandValue() == 1) return utility.checkPair(set);
+        else if (utility.checkStraightFlush(set).getHandValue() == 8) return utility.checkStraightFlush(set);
+        else if (utility.checkFourOfAKind(set).getHandValue() == 7) return utility.checkFourOfAKind(set);
+        else if (utility.checkFullHouse(set).getHandValue() == 6) return utility.checkFullHouse(set);
+        else if (utility.checkFlush(set).getHandValue() == 5) return utility.checkFlush(set);
+        else if (utility.checkStraight(set).getHandValue() == 4) return utility.checkStraight(set);
+        else if (utility.checkThreeOfAKind(set).getHandValue() == 3) return utility.checkThreeOfAKind(set);
+        else if (utility.checkTwoPairs(set).getHandValue() == 2) return utility.checkTwoPairs(set);
+        else if (utility.checkPair(set).getHandValue() == 1) return utility.checkPair(set);
         else return new HandOutcome.Builder(0).withSingleHighest(checkHighCard(set)).build();
     }
 
@@ -58,16 +58,16 @@ public class HandAnalyzer {
     }
 
     public List<ArrayList<Card>> makeFiveHandSets(ArrayList<Card> set) {
-        ArrayList<Card> fiveHandSet = new ArrayList<>();
         List<ArrayList<Card>> sets = new ArrayList<>();
-        String[] allPerms = "01234,01235,01236,01245,01246,01256,01345,01346,01356,01456,02345,02346,02356,02456,03456,12345,12346,12356,12456,13456".split(",");
+        String[] allPerms = {"01234","01235","01236","01245","01246","01256","01345","01346","01356","01456","02345","02346","02356","02456","03456","12345","12346","12356","12456","13456"};
         for (int i = 0; i < 20; i++) {
             String currentPerm = allPerms[i];
-            fiveHandSet.add(set.get(currentPerm.charAt(0)));
-            fiveHandSet.add(set.get(currentPerm.charAt(1)));
-            fiveHandSet.add(set.get(currentPerm.charAt(2)));
-            fiveHandSet.add(set.get(currentPerm.charAt(3)));
-            fiveHandSet.add(set.get(currentPerm.charAt(4)));
+            ArrayList<Card> fiveHandSet = new ArrayList<>();
+            fiveHandSet.add(set.get(Character.getNumericValue(currentPerm.charAt(0))));
+            fiveHandSet.add(set.get(Character.getNumericValue(currentPerm.charAt(1))));
+            fiveHandSet.add(set.get(Character.getNumericValue(currentPerm.charAt(2))));
+            fiveHandSet.add(set.get(Character.getNumericValue(currentPerm.charAt(3))));
+            fiveHandSet.add(set.get(Character.getNumericValue(currentPerm.charAt(4))));
             sets.add(fiveHandSet);
         }
         return sets;
@@ -80,6 +80,7 @@ public class HandAnalyzer {
         ArrayList<Card> finalWinningHand = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
             HandOutcome outcome = getHandOutcome(playerSets.get(i));
+            System.out.println("From function " + outcome.getHandValue() + " " + outcome.getHighestIncluded());
             if (outcome.getHandValue() == 9) {
                 outcome.setBestSet(playerSets.get(i));
                 return outcome;

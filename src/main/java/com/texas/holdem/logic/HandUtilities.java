@@ -38,7 +38,6 @@ public class HandUtilities {
             }
         }
         findings.add(nCount);
-        System.out.println(valuesSet);
         return findings;
     }
 
@@ -111,11 +110,14 @@ public class HandUtilities {
 
     public HandOutcome checkFullHouse(ArrayList<Card> fiveHandSet) {
         HandOutcome pairOutcome = checkPair(fiveHandSet);
+        System.out.println("Pair on "+ pairOutcome.getHighestIncluded());
         HandOutcome threeOutcome = checkThreeOfAKind(fiveHandSet);
+        System.out.println("Three on " + threeOutcome.getHighestIncluded());
         int singleHighest = 0;
         if (pairOutcome.getSingleHighest() <= threeOutcome.getSingleHighest()) { singleHighest = threeOutcome.getSingleHighest(); }
         else singleHighest = pairOutcome.getSingleHighest();
-        if(pairOutcome.getHandValue() == 9 && threeOutcome.getHandValue() == 7 && pairOutcome.getHighestIncluded() != threeOutcome.getHighestIncluded()) {
+        if(pairOutcome.getHandValue() == 1 && threeOutcome.getHandValue() == 3 && pairOutcome.getHighestIncluded() != threeOutcome.getHighestIncluded()) {
+            System.out.println("FULL HOUSE FOUND");
             HandOutcome outcome = new HandOutcome.Builder(6)
                     .withSingleHighest(singleHighest)
                     .withHighestIncluded(threeOutcome.getHighestIncluded())
