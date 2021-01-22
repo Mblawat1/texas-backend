@@ -68,11 +68,12 @@ public class PlayerController {
     @PutMapping("/api/room/{roomId}/player/{playerId}/pass")
     public ResponseEntity<?> pass(@PathVariable String roomId, @PathVariable int playerId) {
         playerService.pass(roomId, playerId);
-        messagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
 
         var winner = roomService.checkAllPassed(roomId);
-        messagingTemplate.convertAndSend("/topic/room/" + roomId, new Winner("winner",winner));
+        winner.ifPresent(win -> messagingTemplate.convertAndSend("/topic/room/" + roomId, new Winner("winner",win)));
+
         messagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
+
         return ResponseEntity.ok().build();
     }
 

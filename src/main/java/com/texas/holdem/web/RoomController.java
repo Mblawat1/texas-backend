@@ -1,8 +1,7 @@
 package com.texas.holdem.web;
 
-import com.texas.holdem.elements.PlayerDTO;
-import com.texas.holdem.elements.RoomId;
-import com.texas.holdem.service.PlayerService;
+import com.texas.holdem.elements.players.PlayerDTO;
+import com.texas.holdem.elements.room.RoomId;
 import com.texas.holdem.service.RoomService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,9 +22,6 @@ public class RoomController {
 
     @Autowired
     RoomService roomService;
-
-    @Autowired
-    PlayerService playerService;
 
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
@@ -98,7 +94,7 @@ public class RoomController {
      */
     @PostMapping("/api/room/{roomId}/player")
     public ResponseEntity<?> joinRoom(@PathVariable String roomId, @RequestBody PlayerDTO player) {
-        var id = playerService.addPlayer(roomId, player);
+        var id = roomService.addPlayer(roomId, player);
         messagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
         return ResponseEntity.ok().body(new Id(id));
     }
@@ -112,7 +108,7 @@ public class RoomController {
     @CrossOrigin("*")
     @PostMapping("/api/room/{roomId}/player/{playerId}/delete")
     public ResponseEntity<?> leaveRoom(@PathVariable String roomId, @PathVariable int playerId) {
-        playerService.deletePlayer(roomId, playerId);
+        roomService.deletePlayer(roomId, playerId);
         messagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
 
         var playersInRoom = roomService.getRoomOrThrow(roomId).getPlayers().size();

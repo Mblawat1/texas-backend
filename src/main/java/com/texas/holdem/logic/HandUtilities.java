@@ -1,10 +1,9 @@
 package com.texas.holdem.logic;
 
-import com.texas.holdem.elements.Card;
+import com.texas.holdem.elements.cards.Card;
 import lombok.*;
 
 import java.util.*;
-import java.util.function.Predicate;
 
 @Getter
 @Setter

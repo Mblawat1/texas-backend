@@ -1,4 +1,4 @@
-package com.texas.holdem.elements;
+package com.texas.holdem.elements.cards;
 
 import lombok.*;
 

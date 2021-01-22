@@ -1,6 +1,7 @@
-package com.texas.holdem.elements;
+package com.texas.holdem.elements.players;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.texas.holdem.elements.cards.HoleSet;
 import lombok.*;
 
 @Getter
@@ -9,10 +10,10 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 public class Player {
-    int id;
-    String nickname;
-    int budget;
-    HoleSet holeSet;
+    private int id;
+    private String nickname;
+    private int budget;
+    private HoleSet holeSet;
     private int bet;
     private int avatar;
     private boolean pass;

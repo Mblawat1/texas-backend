@@ -1,6 +1,7 @@
-package com.texas.holdem.elements;
+package com.texas.holdem.elements.room;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.texas.holdem.elements.cards.Card;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
