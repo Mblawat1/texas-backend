@@ -107,4 +107,15 @@ public class HandAnalyzer {
                 .build();
     }
 
+    public ArrayList<Integer> getWinner(List<HandOutcome> playersBestHands) {
+        ArrayList<Integer> winnerID = new ArrayList<>();
+        int winningHand = 0;
+        int onHighestIncluded = 0;
+        int onSingleHighest = 0;
+        for (int i = 0; i < playersBestHands.size(); i++) {
+
+        }
+        return winnerID;
+    }
+
 }
