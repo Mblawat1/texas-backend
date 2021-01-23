@@ -130,7 +130,7 @@ public class RoomService {
 
         var bigBlind = room.getStartingBudget() / 50;
 
-        players.forEach(n -> {
+        players.stream().filter(n -> n.getBudget() > 0).forEach(n -> {
             if (n.getBudget() <= 0)
                 n.setPass(true);
             if (n.isStarting()) {
