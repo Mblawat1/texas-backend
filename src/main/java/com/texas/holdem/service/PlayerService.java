@@ -29,17 +29,20 @@ public class PlayerService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "It isn't your turn");
         if (player.getBudget() < bet)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Your budget is too low");
-        if(player.getBet()+bet < maxBet)
+        if (player.getBet() + bet < maxBet)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Your bet is too low");
 
-        betHelper(player,room,bet);
+        betHelper(player, room, bet);
         var table = room.getTable();
         table.setMaxBet(player.getBet());
 
-        if(player.getBet() > maxBet) {
+        if (player.getBudget() == 0) {
+            player.setLastAction("All in");
+            player.setAllIn(true);
+        } else if (player.getBet() > maxBet) {
             notPassed.forEach(n -> n.setCheck(false));
             player.setLastAction("raise");
-        }else
+        } else
             player.setLastAction("call");
 
         player.setCheck(true);
@@ -71,12 +74,12 @@ public class PlayerService {
         var players = room.getPlayers();
         var ready = players.stream().filter(n -> n.isReady()).count();
 
-        if(ready == players.size())
+        if (ready == players.size())
             roomService.startRound(roomId);
 
     }
 
-    private void betHelper(Player player,Room room, int bet){
+    private void betHelper(Player player, Room room, int bet) {
         player.addBet(bet);
         player.subBudget(bet);
         room.addCoinsInRound(bet);

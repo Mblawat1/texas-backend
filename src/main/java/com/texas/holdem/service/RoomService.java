@@ -3,6 +3,7 @@ package com.texas.holdem.service;
 import com.texas.holdem.elements.cards.HoleSet;
 import com.texas.holdem.elements.players.Player;
 import com.texas.holdem.elements.players.PlayerDTO;
+import com.texas.holdem.elements.players.Winner;
 import com.texas.holdem.elements.room.Room;
 import com.texas.holdem.elements.room.RoomId;
 import com.texas.holdem.elements.room.Table;
@@ -94,7 +95,7 @@ public class RoomService {
         rooms.remove(roomId);
     }
 
-    public Optional<String> checkAllPassed(String roomId) {
+    public Optional<Winner> checkAllPassed(String roomId) {
         var room = getRoomOrThrow(roomId);
 
         var notPassed = room.getNotPassedPlayers();
@@ -114,7 +115,7 @@ public class RoomService {
 
             startRound(roomId);
 
-            return Optional.of(winner.getNickname());
+            return Optional.of(new Winner(winner.getNickname(),"Everyone passed"));
         }
         return Optional.empty();
     }
@@ -122,26 +123,31 @@ public class RoomService {
     public void startRound(String roomId) {
         var room = getRoomOrThrow(roomId);
         var players = room.getPlayers();
+        var notBankrupts = players.stream().filter(p -> p.getBudget() > 0).collect(Collectors.toList());
 
         if (players.size() < 2)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough players");
+        if (notBankrupts.size() < 2)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "One of players is bankrupt");
 
         players.forEach(n -> n.setPass(false));
 
         var bigBlind = room.getStartingBudget() / 50;
 
         players.forEach(n -> {
+            if(n.getBudget() <= 0)
+                n.setPass(true);
             if (n.isStarting()) {
                 room.nextTurn(n.getId());
                 n.setBet(bigBlind);
                 n.subBudget(bigBlind);
 
-                var lowestId = players.get(0).getId();
+                var lowestId = notBankrupts.get(0).getId();
                 Player smallBlind;
                 if (n.getId() == lowestId) {
-                    smallBlind = players.get(players.size() - 1);
+                    smallBlind = notBankrupts.get(notBankrupts.size() - 1);
                 } else {
-                    smallBlind = players.stream()
+                    smallBlind = notBankrupts.stream()
                             .filter(p -> p.getId() < n.getId())
                             .max(Comparator.comparing(Player::getId)).get();
                 }
@@ -157,7 +163,7 @@ public class RoomService {
 
         room.getTable().getCommunitySet().clear();
 
-        players.forEach(n -> n.setHoleSet(new HoleSet(deck.getFirst(), deck.getFirst())));
+        notBankrupts.forEach(n -> n.setHoleSet(new HoleSet(deck.getFirst(), deck.getFirst())));
 
         room.getTable().setStatus("game");
         room.getTable().setMaxBet(bigBlind);
@@ -173,21 +179,25 @@ public class RoomService {
         var commSet = table.getCommunitySet();
         var deck = room.getDeck();
 
-        if (checked == notPassed.size() && commSet.size() < 5) {
+        if(checked == notPassed.size() && notPassed.stream().anyMatch(n -> n.isAllIn())){
+            while(commSet.size()<5){
+                commSet.add(deck.getFirst());
+            }
+        }else if (checked == notPassed.size() && commSet.size() < 5) {
             if (commSet.size() == 0) {
                 commSet.add(deck.getFirst());
                 commSet.add(deck.getFirst());
                 commSet.add(deck.getFirst());
             } else
                 commSet.add(deck.getFirst());
-            players.forEach(n -> n.setBet(0));
-            table.setMaxBet(0);
-            players.forEach(n -> n.setCheck(false));
-            notPassed.forEach(n -> n.setLastAction(null));
         }
+        players.forEach(n -> n.setBet(0));
+        table.setMaxBet(0);
+        players.forEach(n -> n.setCheck(false));
+        notPassed.forEach(n -> n.setLastAction(null));
     }
 
-    public Optional<List<String>> getWinners(String roomId) {
+    public Optional<List<Winner>> getWinners(String roomId) {
         var room = getRoomOrThrow(roomId);
         var notPassed = room.getNotPassedPlayers();
         var table = room.getTable();
@@ -207,7 +217,15 @@ public class RoomService {
             var prize = table.getCoinsInRound() / winners.size();
             winners.forEach(p -> p.addBudget(prize));
             table.setCoinsInRound(0);
-            var winnersList = winners.stream().map(n -> n.getNickname()).collect(Collectors.toList());
+            var winnersList = new ArrayList<Winner>();
+            for(Player player: winners){
+                var hand = handAnalyzer
+                        .translateHand(outcomes.stream().filter(n -> n.getPlayerId() == player.getId())
+                                .map(n -> n.getHandValue()).findFirst().orElse(1));
+                winnersList.add(new Winner(player.getNickname(),hand));
+            }
+            room.nextStarting();
+            notPassed.forEach(n -> n.setAllIn(false));
             startRound(roomId);
             return Optional.of(winnersList);
         }
