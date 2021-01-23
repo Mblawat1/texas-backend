@@ -131,6 +131,8 @@ public class RoomService {
         var bigBlind = room.getStartingBudget() / 50;
 
         players.forEach(n -> {
+            if (n.getBudget() <= 0)
+                n.setPass(true);
             if (n.isStarting()) {
                 room.nextTurn(n.getId());
                 n.setBet(bigBlind);
