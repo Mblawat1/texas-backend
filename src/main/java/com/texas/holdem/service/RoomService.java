@@ -6,18 +6,22 @@ import com.texas.holdem.elements.players.PlayerDTO;
 import com.texas.holdem.elements.room.Room;
 import com.texas.holdem.elements.room.RoomId;
 import com.texas.holdem.elements.room.Table;
+import com.texas.holdem.logic.HandAnalyzer;
+import com.texas.holdem.logic.HandOutcome;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class RoomService {
     private HashMap<RoomId, Room> rooms;
+
+    @Autowired
+    HandAnalyzer handAnalyzer;
 
     public RoomService() {
         rooms = new HashMap<RoomId, Room>();
@@ -103,9 +107,7 @@ public class RoomService {
                 n.setActive(false);
             });
             room.getTable().setCoinsInRound(0);
-
             room.nextStarting();
-
             room.getTable().getCommunitySet().clear();
 
             startRound(roomId);
@@ -117,7 +119,6 @@ public class RoomService {
 
     public void startRound(String roomId) {
         var room = getRoomOrThrow(roomId);
-
         var players = room.getPlayers();
 
         if (players.size() < 2)
@@ -155,8 +156,55 @@ public class RoomService {
         players.forEach(n -> n.setHoleSet(new HoleSet(deck.getFirst(), deck.getFirst())));
 
         room.getTable().setStatus("game");
-
         room.getTable().setMaxBet(bigBlind);
+    }
+
+    public void dealCards(String roomId){
+        var room = getRoomOrThrow(roomId);
+        var players = room.getPlayers();
+        var notPassed = room.getNotPassedPlayers();
+        var table = room.getTable();
+
+        var checked = notPassed.stream().filter(n -> n.isCheck()).count();
+        var commSet = table.getCommunitySet();
+        var deck = room.getDeck();
+
+        if(checked == notPassed.size() && commSet.size()<5){
+            if(commSet.size() == 0){
+                commSet.add(deck.getFirst());
+                commSet.add(deck.getFirst());
+                commSet.add(deck.getFirst());
+            }else
+                commSet.add(deck.getFirst());
+            players.forEach(n -> n.setCheck(false));
+            notPassed.forEach(n -> n.setLastAction(null));
+        }
+    }
+
+    public Optional<List<String>> getWinners(String roomId){
+        var room = getRoomOrThrow(roomId);
+        var notPassed = room.getNotPassedPlayers();
+        var table = room.getTable();
+
+        var checked = notPassed.stream().filter(n -> n.isCheck()).count();
+
+        if(checked == notPassed.size()){
+            ArrayList<HandOutcome> outcomes = new ArrayList<>();
+            notPassed.forEach(p -> outcomes.add(handAnalyzer.getPlayersWinningHand(p.getId(),p.getHoleSet(),table.getCommunitySet())));
+            ArrayList<Integer> winnersIds = handAnalyzer.getWinner(outcomes);
+
+            var winners = notPassed
+                    .stream()
+                    .filter(p -> winnersIds.contains(p.getId()))
+                    .collect(Collectors.toList());
+
+            var prize = table.getCoinsInRound()/winners.size();
+            winners.forEach(p -> p.addBudget(prize));
+            table.setCoinsInRound(0);
+            var winnersList = winners.stream().map(n -> n.getNickname()).collect(Collectors.toList());
+            return Optional.of(winnersList);
+        }
+        return Optional.empty();
     }
 }
 

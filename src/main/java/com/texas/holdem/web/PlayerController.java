@@ -52,8 +52,8 @@ public class PlayerController {
     @PutMapping("/api/room/{roomId}/player/{playerId}")
     public ResponseEntity<?> placeBet(@PathVariable String roomId, @PathVariable int playerId, @RequestBody Amount amount) {
         playerService.setBet(roomId, playerId, amount.bet);
-        playerService.dealCards(roomId);
-        var winners = playerService.getWinners(roomId);
+        roomService.dealCards(roomId);
+        var winners = roomService.getWinners(roomId);
         winners.ifPresent(n -> messagingTemplate.convertAndSend("/topic/room/" + roomId, new Winners("winner",n)));
         messagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
         return ResponseEntity.ok().build();
