@@ -17,14 +17,19 @@ public class HandOutcome implements Comparable<HandOutcome>{
     private int handValue;
     private int highestIncluded; //może być też wartość najwyższej karty w trójce w FULL_HOUSE
     private int secondHighestIncluded; //może być też wartość najwyższej karty w parze w FULL_HOUSE
-    private int singleHighest;
+    private int firstHighestExcluded; //albo po prostu najwyższa w układach na 5 kart
+    private int secondHighestExcluded;
+    private int thirdHighestExcluded;
     private ArrayList<Card> bestSet;
 
     @Override
     public int compareTo(HandOutcome outcome) {
         return Comparator.comparingInt(HandOutcome::getHandValue)
                 .thenComparingInt(HandOutcome::getHighestIncluded)
-                .thenComparingInt(HandOutcome::getSingleHighest)
+                .thenComparingInt(HandOutcome::getSecondHighestIncluded)
+                .thenComparingInt(HandOutcome::getFirstHighestExcluded)
+                .thenComparingInt(HandOutcome::getSecondHighestExcluded)
+                .thenComparingInt(HandOutcome::getThirdHighestExcluded)
                 .compare(this, outcome);
     }
 
@@ -34,7 +39,9 @@ public class HandOutcome implements Comparable<HandOutcome>{
         private int handValue;
         private int highestIncluded;
         private int secondHighestIncluded;
-        private int singleHighest;
+        private int firstHighestExcluded;
+        private int secondHighestExcluded;
+        private int thirdHighestExcluded;
         private ArrayList<Card> bestSet;
 
         public Builder(int handValue) {
@@ -56,8 +63,18 @@ public class HandOutcome implements Comparable<HandOutcome>{
             return this;
         }
 
-        public Builder withSingleHighest(int singleHighest) {
-            this.singleHighest = singleHighest;
+        public Builder withFirstHighestExcluded(int firstHighestExcluded) {
+            this.firstHighestExcluded = firstHighestExcluded;
+            return this;
+        }
+
+        public Builder withSecondHighestExcluded(int secondHighestExcluded) {
+            this.secondHighestExcluded = secondHighestExcluded;
+            return this;
+        }
+
+        public Builder withThirdHighestExcluded(int thirdHighestExcluded) {
+            this.thirdHighestExcluded = thirdHighestExcluded;
             return this;
         }
 
@@ -72,7 +89,9 @@ public class HandOutcome implements Comparable<HandOutcome>{
             handOutcome.playerId = this.playerId;
             handOutcome.highestIncluded = this.highestIncluded;
             handOutcome.secondHighestIncluded = this.secondHighestIncluded;
-            handOutcome.singleHighest = this.singleHighest;
+            handOutcome.firstHighestExcluded = firstHighestExcluded;
+            handOutcome.secondHighestExcluded = secondHighestExcluded;
+            handOutcome.thirdHighestExcluded = thirdHighestExcluded;
             handOutcome.bestSet = this.bestSet;
             return handOutcome;
         }

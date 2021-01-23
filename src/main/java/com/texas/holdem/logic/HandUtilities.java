@@ -66,13 +66,13 @@ public class HandUtilities {
         if(ifRightSuit && ifRightRanks) {
             System.out.println(ranks);
             HandOutcome outcome = new HandOutcome.Builder(9)
-                    .withSingleHighest(14)
+                    .withFirstHighestExcluded(14)
                     .withHighestIncluded(14)
                     .build();
             return outcome;
         }
         else return (new HandOutcome.Builder(0)
-                .withSingleHighest(ranks.get(4))
+                .withFirstHighestExcluded(ranks.get(4))
                 .build());
     }
 
@@ -86,13 +86,13 @@ public class HandUtilities {
         { ifRightRanks = true; }
         if(ifRightSuit && ifRightRanks) {
             HandOutcome outcome = new HandOutcome.Builder(8)
-                    .withSingleHighest(ranks.get(4))
+                    .withFirstHighestExcluded(ranks.get(4))
                     .withHighestIncluded(ranks.get(4))
                     .build();
             return outcome;
         }
         else return (new HandOutcome.Builder(0)
-                .withSingleHighest(ranks.get(4))
+                .withFirstHighestExcluded(ranks.get(4))
                 .build());
     }
 
@@ -100,13 +100,13 @@ public class HandUtilities {
         List<Integer> nCount = getNCount(fiveHandSet, 4);
         if(nCount.get(nCount.size()-1) == 1) {
             HandOutcome outcome = new HandOutcome.Builder(7)
-                    .withSingleHighest(nCount.get(0))
+                    .withFirstHighestExcluded(nCount.get(0))
                     .withHighestIncluded(nCount.get(1))
                     .build();
             return outcome;
         }
         else return (new HandOutcome.Builder(0)
-                .withSingleHighest(nCount.get(0))
+                .withFirstHighestExcluded(nCount.get(0))
                 .build());
     }
 
@@ -114,11 +114,11 @@ public class HandUtilities {
         HandOutcome pairOutcome = checkPair(fiveHandSet);
         HandOutcome threeOutcome = checkThreeOfAKind(fiveHandSet);
         int singleHighest = 0;
-        if (pairOutcome.getSingleHighest() <= threeOutcome.getSingleHighest()) { singleHighest = threeOutcome.getSingleHighest(); }
-        else singleHighest = pairOutcome.getSingleHighest();
+        if (pairOutcome.getFirstHighestExcluded() <= threeOutcome.getFirstHighestExcluded()) { singleHighest = threeOutcome.getFirstHighestExcluded(); }
+        else singleHighest = pairOutcome.getFirstHighestExcluded();
         if(pairOutcome.getHandValue() == 1 && threeOutcome.getHandValue() == 3 && pairOutcome.getHighestIncluded() != threeOutcome.getHighestIncluded()) {
             HandOutcome outcome = new HandOutcome.Builder(6)
-                    .withSingleHighest(singleHighest)
+                    .withFirstHighestExcluded(singleHighest)
                     .withHighestIncluded(threeOutcome.getHighestIncluded())
                     .withSecondHighestIncluded(pairOutcome.getHighestIncluded())
                     .build();
@@ -126,7 +126,7 @@ public class HandUtilities {
             return outcome;
         }
         else return (new HandOutcome.Builder(0)
-                .withSingleHighest(singleHighest)
+                .withFirstHighestExcluded(singleHighest)
                 .build());
     }
 
@@ -135,14 +135,14 @@ public class HandUtilities {
         boolean ifRightSuit = checkSuitsEquality(fiveHandSet);
         if(ifRightSuit) {
             HandOutcome outcome = new HandOutcome.Builder(5)
-                    .withSingleHighest(ranks.get(4))
+                    .withFirstHighestExcluded(ranks.get(4))
                     .withHighestIncluded(ranks.get(4))
                     .withSecondHighestIncluded(ranks.get(3))
                     .build();
             return outcome;
         }
         else return (new HandOutcome.Builder(0)
-                .withSingleHighest(ranks.get(4))
+                .withFirstHighestExcluded(ranks.get(4))
                 .build());
     }
 
@@ -155,13 +155,13 @@ public class HandUtilities {
         { ifRightRanks = true; }
         if(ifRightRanks) {
             HandOutcome outcome = new HandOutcome.Builder(4)
-                    .withSingleHighest(ranks.get(4))
+                    .withFirstHighestExcluded(ranks.get(4))
                     .withHighestIncluded(ranks.get(4))
                     .build();
             return outcome;
         }
         else return (new HandOutcome.Builder(0)
-                .withSingleHighest(ranks.get(4))
+                .withFirstHighestExcluded(ranks.get(4))
                 .build());
     }
 
@@ -169,13 +169,13 @@ public class HandUtilities {
         List<Integer> nCount = getNCount(fiveHandSet, 3);
         if(nCount.get(nCount.size()-1) == 1) {
             HandOutcome outcome = new HandOutcome.Builder(3)
-                    .withSingleHighest(nCount.get(0))
+                    .withFirstHighestExcluded(nCount.get(0))
                     .withHighestIncluded(nCount.get(1))
                     .build();
             return outcome;
         }
         else return (new HandOutcome.Builder(0)
-                .withSingleHighest(nCount.get(0))
+                .withFirstHighestExcluded(nCount.get(0))
                 .build());
     }
 
@@ -183,14 +183,14 @@ public class HandUtilities {
         List<Integer> nCount = getNCount(fiveHandSet, 2);
         if(nCount.get(nCount.size()-1) == 2) {
             HandOutcome outcome = new HandOutcome.Builder(2)
-                    .withSingleHighest(nCount.get(0))
+                    .withFirstHighestExcluded(nCount.get(0))
                     .withHighestIncluded(nCount.get(2))
                     .withSecondHighestIncluded(nCount.get(1))
                     .build();
             return outcome;
         }
         else return (new HandOutcome.Builder(0)
-                .withSingleHighest(nCount.get(0))
+                .withFirstHighestExcluded(nCount.get(0))
                 .build());
     }
 
@@ -198,13 +198,13 @@ public class HandUtilities {
         List<Integer> nCount = getNCount(fiveHandSet, 2);
         if(nCount.get(nCount.size()-1) == 1) {
             HandOutcome outcome = new HandOutcome.Builder(1)
-                    .withSingleHighest(nCount.get(0))
+                    .withFirstHighestExcluded(nCount.get(0))
                     .withHighestIncluded(nCount.get(1))
                     .build();
             return outcome;
         }
         else return (new HandOutcome.Builder(0)
-                .withSingleHighest(nCount.get(0))
+                .withFirstHighestExcluded(nCount.get(0))
                 .build());
     }
 }
