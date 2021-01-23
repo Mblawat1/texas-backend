@@ -163,7 +163,7 @@ public class RoomService {
 
         room.getTable().getCommunitySet().clear();
 
-        players.forEach(n -> n.setHoleSet(new HoleSet(deck.getFirst(), deck.getFirst())));
+        notBankrupts.forEach(n -> n.setHoleSet(new HoleSet(deck.getFirst(), deck.getFirst())));
 
         room.getTable().setStatus("game");
         room.getTable().setMaxBet(bigBlind);
