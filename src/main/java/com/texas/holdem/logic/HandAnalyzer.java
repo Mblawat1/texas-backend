@@ -15,7 +15,7 @@ public class HandAnalyzer {
 
     public String translateHand(int handNumber) {
         String handName = new String();
-        HashMap<Integer, String> hierarchy = new HashMap<Integer, String>();
+        Map<Integer, String> hierarchy = new HashMap<Integer, String>();
         hierarchy.put(0, "HIGH_CARD");
         hierarchy.put(1, "PAIR");
         hierarchy.put(2, "TWO_PAIR");
@@ -73,7 +73,8 @@ public class HandAnalyzer {
         return sets;
     }
 
-    public HandOutcome getPlayersWinningHand(List<ArrayList<Card>> playerSets) {
+    public HandOutcome getPlayersWinningHand(int id, HoleSet holeSet, CommunitySet communitySet) {
+        List<ArrayList<Card>> playerSets = makeFiveHandSets(makeSet(holeSet, communitySet));
         int finalHandValue = 0;
         int finalSingleHighest = 0;
         int finalHighestIncluded = 0;
@@ -105,6 +106,7 @@ public class HandAnalyzer {
             }
         }
         return new HandOutcome.Builder(finalHandValue)
+                .ofPlayer(id)
                 .withHighestIncluded(finalHighestIncluded)
                 .withSecondHighestIncluded(finalSecondIncluded)
                 .withBestSet(finalWinningHand)
@@ -117,6 +119,11 @@ public class HandAnalyzer {
         int size = playersBestHands.size();
         //ROYAL_FLUSH nie pojawi się u więcej niż 1 gracza jednocześnie
         if (playersBestHands.get(size-1).getHandValue() == 9) {
+            ArrayList<Integer> winnerID = new ArrayList<>();
+            winnerID.add(playersBestHands.get(size-1).getPlayerId());
+            return winnerID;
+        }
+        if (size == 1) {
             ArrayList<Integer> winnerID = new ArrayList<>();
             winnerID.add(playersBestHands.get(size-1).getPlayerId());
             return winnerID;

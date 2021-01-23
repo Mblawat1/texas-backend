@@ -18,9 +18,9 @@ public class HoldemApplication {
         SpringApplication.run(HoldemApplication.class, args);
         HandAnalyzer analyzer = new HandAnalyzer();
         CommunitySet cs = new CommunitySet();
-        HoleSet hs = new HoleSet();
-        hs.setHoleCard1(new Card(5, "heart"));
-        hs.setHoleCard2(new Card(5, "spade"));
+        HoleSet hs1 = new HoleSet();
+        hs1.setHoleCard1(new Card(5, "heart"));
+        hs1.setHoleCard2(new Card(5, "spade"));
         ArrayList<Card> communitySet = new ArrayList<>();
         communitySet.add(new Card(10, "diamond"));
         communitySet.add(new Card(12, "heart"));
@@ -28,11 +28,14 @@ public class HoldemApplication {
         communitySet.add(new Card(5, "diamond"));
         communitySet.add(new Card(11, "diamond"));
         cs.setCommunitySet(communitySet);
-        ArrayList<Card> set = analyzer.makeSet(hs, cs);
-        List<ArrayList<Card>> possibleSets = analyzer.makeFiveHandSets(set);
-        HandOutcome playerOutcome = analyzer.getPlayersWinningHand(possibleSets);
-        playerOutcome.setPlayerId(1);
-        System.out.println("First outcome: " + playerOutcome);
+        HandOutcome playerOutcome = analyzer.getPlayersWinningHand(1, hs1, cs);
+        HandOutcome secondOutcome = analyzer.getPlayersWinningHand(2, new HoleSet(new Card(12, "spade"), new Card(12, "club")), cs);
+        HandOutcome thirdOutcome = analyzer.getPlayersWinningHand(3, new HoleSet(new Card(13, "diamond"), new Card(9, "diamond")), cs);
+        List<HandOutcome> outcomes = new ArrayList<>();
+        outcomes.add(playerOutcome);
+        outcomes.add(secondOutcome);
+        outcomes.add(thirdOutcome);
+        System.out.println(analyzer.getWinner(outcomes));
 
     }
 
