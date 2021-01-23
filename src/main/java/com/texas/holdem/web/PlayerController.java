@@ -1,6 +1,6 @@
 package com.texas.holdem.web;
 
-import com.texas.holdem.elements.players.Winner;
+import com.texas.holdem.elements.players.Winners;
 import com.texas.holdem.service.PlayerService;
 import com.texas.holdem.service.RoomService;
 import lombok.AllArgsConstructor;
@@ -10,9 +10,11 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
 import java.util.Collections;
 
 @RestController
@@ -52,7 +54,7 @@ public class PlayerController {
         playerService.setBet(roomId, playerId, amount.bet);
         playerService.dealCards(roomId);
         var winners = playerService.getWinners(roomId);
-        winners.ifPresent(n -> messagingTemplate.convertAndSend("/topic/room/" + roomId, n));
+        winners.ifPresent(n -> messagingTemplate.convertAndSend("/topic/room/" + roomId, new Winners("winner",n)));
         messagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
         return ResponseEntity.ok().build();
     }
@@ -69,8 +71,9 @@ public class PlayerController {
         playerService.pass(roomId, playerId);
 
         var winner = roomService.checkAllPassed(roomId);
-        winner.ifPresent(win -> messagingTemplate.convertAndSend("/topic/room/" + roomId,
-                Collections.singletonList(new Winner("winner", win))));
+        winner.ifPresent(win ->
+                        messagingTemplate.convertAndSend("/topic/room/" + roomId, new Winners("winner",
+                                Collections.singletonList(win))));
 
         messagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
 

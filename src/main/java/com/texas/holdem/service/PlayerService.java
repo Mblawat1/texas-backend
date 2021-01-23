@@ -1,7 +1,7 @@
 package com.texas.holdem.service;
 
 import com.texas.holdem.elements.players.Player;
-import com.texas.holdem.elements.players.Winner;
+import com.texas.holdem.elements.players.Winners;
 import com.texas.holdem.elements.room.Room;
 import com.texas.holdem.logic.HandAnalyzer;
 import com.texas.holdem.logic.HandOutcome;
@@ -78,7 +78,7 @@ public class PlayerService {
         }
     }
 
-    public Optional<List<Winner>> getWinners(String roomId){
+    public Optional<List<String>> getWinners(String roomId){
         var room = roomService.getRoomOrThrow(roomId);
         var players = room.getPlayers();
         var notPassed = room.getNotPassedPlayers();
@@ -99,7 +99,7 @@ public class PlayerService {
             var prize = table.getCoinsInRound()/winners.size();
             winners.forEach(p -> p.addBudget(prize));
             table.setCoinsInRound(0);
-            var winnersList = winners.stream().map(n -> new Winner("winner",n.getNickname())).collect(Collectors.toList());
+            var winnersList = winners.stream().map(n -> n.getNickname()).collect(Collectors.toList());
             return Optional.of(winnersList);
         }
         return Optional.empty();
