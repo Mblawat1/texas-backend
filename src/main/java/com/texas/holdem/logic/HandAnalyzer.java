@@ -1,13 +1,10 @@
 package com.texas.holdem.logic;
 
 import com.texas.holdem.elements.cards.Card;
-import com.texas.holdem.elements.cards.CommunitySet;
 import com.texas.holdem.elements.cards.HoleSet;
+import com.texas.holdem.elements.cards.CommunitySet;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class HandAnalyzer {
 
@@ -135,8 +132,8 @@ public class HandAnalyzer {
         //obaj wygrywają
         if ((size > 1 && playersBestHands.get(size-1).getHandValue() == playersBestHands.get(size-2).getHandValue()
                 && playersBestHands.get(size-1).getHandValue() != 2 && playersBestHands.get(size-1).getHandValue() != 6)
-        && playersBestHands.get(size-1).getHighestIncluded() == playersBestHands.get(size-2).getHighestIncluded()
-        && playersBestHands.get(size-1).getSingleHighest() == playersBestHands.get(size-2).getSingleHighest()) {
+                && playersBestHands.get(size-1).getHighestIncluded() == playersBestHands.get(size-2).getHighestIncluded()
+                && playersBestHands.get(size-1).getSingleHighest() == playersBestHands.get(size-2).getSingleHighest()) {
             ArrayList<Integer> winnerID = new ArrayList<>();
             winnerID.add(playersBestHands.get(size-1).getPlayerId());
             winnerID.add(playersBestHands.get(size-2).getPlayerId());
@@ -146,8 +143,8 @@ public class HandAnalyzer {
         //drugą parę w przypadku TWO_PAIRS i parę po trójce w przypadku FULL_HOUSE
         //jeśli wartości są te same, obaj gracze wygrywają
         else if ((size > 1 && playersBestHands.get(size-1).getHandValue() == 2 || playersBestHands.get(size-1).getHandValue() == 6)
-        && playersBestHands.get(size-1).getHandValue() == playersBestHands.get(size-2).getHandValue()
-        && playersBestHands.get(size-1).getHighestIncluded() == playersBestHands.get(size-2).getHighestIncluded()) {
+                && playersBestHands.get(size-1).getHandValue() == playersBestHands.get(size-2).getHandValue()
+                && playersBestHands.get(size-1).getHighestIncluded() == playersBestHands.get(size-2).getHighestIncluded()) {
             if (playersBestHands.get(size-1).getSecondHighestIncluded() > playersBestHands.get(size-2).getSecondHighestIncluded()) {
                 ArrayList<Integer> winnerID = new ArrayList<>();
                 winnerID.add(playersBestHands.get(size-1).getPlayerId());
