@@ -51,7 +51,7 @@ public class HandOutcome implements Comparable<HandOutcome>{
             return this;
         }
 
-        public Builder withNextHighestIncluded(int secondHighestIncluded) {
+        public Builder withSecondHighestIncluded(int secondHighestIncluded) {
             this.secondHighestIncluded = secondHighestIncluded;
             return this;
         }

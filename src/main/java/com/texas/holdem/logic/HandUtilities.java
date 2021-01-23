@@ -120,8 +120,9 @@ public class HandUtilities {
             HandOutcome outcome = new HandOutcome.Builder(6)
                     .withSingleHighest(singleHighest)
                     .withHighestIncluded(threeOutcome.getHighestIncluded())
-                    .withNextHighestIncluded(pairOutcome.getHighestIncluded())
+                    .withSecondHighestIncluded(pairOutcome.getHighestIncluded())
                     .build();
+            System.out.println(outcome.getSecondHighestIncluded());
             return outcome;
         }
         else return (new HandOutcome.Builder(0)
@@ -136,7 +137,7 @@ public class HandUtilities {
             HandOutcome outcome = new HandOutcome.Builder(5)
                     .withSingleHighest(ranks.get(4))
                     .withHighestIncluded(ranks.get(4))
-                    .withNextHighestIncluded(ranks.get(3))
+                    .withSecondHighestIncluded(ranks.get(3))
                     .build();
             return outcome;
         }
@@ -184,7 +185,7 @@ public class HandUtilities {
             HandOutcome outcome = new HandOutcome.Builder(2)
                     .withSingleHighest(nCount.get(0))
                     .withHighestIncluded(nCount.get(2))
-                    .withNextHighestIncluded(nCount.get(1))
+                    .withSecondHighestIncluded(nCount.get(1))
                     .build();
             return outcome;
         }
