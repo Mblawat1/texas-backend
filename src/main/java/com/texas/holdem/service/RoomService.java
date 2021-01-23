@@ -153,6 +153,8 @@ public class RoomService {
         var deck = room.getDeck();
         deck.shuffle();
 
+        room.getTable().getCommunitySet().clear();
+
         players.forEach(n -> n.setHoleSet(new HoleSet(deck.getFirst(), deck.getFirst())));
 
         room.getTable().setStatus("game");
