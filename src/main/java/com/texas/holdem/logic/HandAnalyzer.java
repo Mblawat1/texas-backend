@@ -89,7 +89,7 @@ public class HandAnalyzer {
         int finalFirstHighestExcluded = 0;
         int finalSecondHighestExcluded = 0;
         int finalThirdHighestExcluded = 0;
-        
+
         ArrayList<Card> finalWinningHand = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
             HandOutcome outcome = getHandOutcome(playerSets.get(i));
@@ -181,7 +181,7 @@ public class HandAnalyzer {
             outcome.setPlayerId(id);
             return outcome;
         }
-         return new HandOutcome.Builder(finalHandValue)
+        return new HandOutcome.Builder(finalHandValue)
                 .ofPlayer(id)
                 .withHighestIncluded(finalHighestIncluded)
                 .withSecondHighestIncluded(finalSecondIncluded)
@@ -258,8 +258,8 @@ public class HandAnalyzer {
         HandOutcome outcome1 = playersBestHands.get(size-1);
         HandOutcome outcome2 = playersBestHands.get(size-2);
         if (outcome1.getHandValue() == outcome2.getHandValue() && outcome1.getHighestIncluded() == outcome2.getHighestIncluded()
-        && outcome1.getSecondHighestIncluded() == outcome2.getSecondHighestIncluded() && outcome1.getFirstHighestExcluded() == outcome2.getFirstHighestExcluded()
-        && outcome1.getSecondHighestExcluded() == outcome2.getSecondHighestExcluded() && outcome1.getThirdHighestExcluded() == outcome2.getThirdHighestExcluded()) {
+                && outcome1.getSecondHighestIncluded() == outcome2.getSecondHighestIncluded() && outcome1.getFirstHighestExcluded() == outcome2.getFirstHighestExcluded()
+                && outcome1.getSecondHighestExcluded() == outcome2.getSecondHighestExcluded() && outcome1.getThirdHighestExcluded() == outcome2.getThirdHighestExcluded()) {
             ArrayList<Integer> winnerID = new ArrayList<>();
             winnerID.add(playersBestHands.get(size - 1).getPlayerId());
             winnerID.add(playersBestHands.get(size-2).getPlayerId());
