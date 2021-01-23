@@ -3,6 +3,7 @@ package com.texas.holdem.service;
 import com.texas.holdem.elements.cards.HoleSet;
 import com.texas.holdem.elements.players.Player;
 import com.texas.holdem.elements.players.PlayerDTO;
+import com.texas.holdem.elements.players.Winner;
 import com.texas.holdem.elements.room.Room;
 import com.texas.holdem.elements.room.RoomId;
 import com.texas.holdem.elements.room.Table;
@@ -94,7 +95,7 @@ public class RoomService {
         rooms.remove(roomId);
     }
 
-    public Optional<String> checkAllPassed(String roomId) {
+    public Optional<Winner> checkAllPassed(String roomId) {
         var room = getRoomOrThrow(roomId);
 
         var notPassed = room.getNotPassedPlayers();
@@ -114,7 +115,7 @@ public class RoomService {
 
             startRound(roomId);
 
-            return Optional.of(winner.getNickname());
+            return Optional.of(new Winner(winner.getNickname(),"Everyone passed"));
         }
         return Optional.empty();
     }
@@ -192,7 +193,7 @@ public class RoomService {
         }
     }
 
-    public Optional<List<String>> getWinners(String roomId) {
+    public Optional<List<Winner>> getWinners(String roomId) {
         var room = getRoomOrThrow(roomId);
         var notPassed = room.getNotPassedPlayers();
         var table = room.getTable();
@@ -209,12 +210,21 @@ public class RoomService {
                     .filter(p -> winnersIds.contains(p.getId()))
                     .collect(Collectors.toList());
 
-
+            var winningHands = outcomes.stream()
+                    .filter(n -> winnersIds.contains(n.getPlayerId()))
+                    .map(n -> handAnalyzer.translateHand(n.getPlayerId()))
+                    .collect(Collectors.toList());
 
             var prize = table.getCoinsInRound() / winners.size();
             winners.forEach(p -> p.addBudget(prize));
             table.setCoinsInRound(0);
-            var winnersList = winners.stream().map(n -> n.getNickname()).collect(Collectors.toList());
+            var winnersList = new ArrayList<Winner>();
+            for(Player player: winners){
+                var hand = handAnalyzer
+                        .translateHand(outcomes.stream().filter(n -> n.getPlayerId() == player.getId())
+                                .map(n -> n.getHandValue()).findFirst().orElse(1));
+                winnersList.add(new Winner(player.getNickname(),hand));
+            }
             startRound(roomId);
             return Optional.of(winnersList);
         }
