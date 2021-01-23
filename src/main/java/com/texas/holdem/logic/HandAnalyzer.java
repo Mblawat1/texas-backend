@@ -1,11 +1,13 @@
 package com.texas.holdem.logic;
 
 import com.texas.holdem.elements.cards.Card;
-import com.texas.holdem.elements.cards.HoleSet;
 import com.texas.holdem.elements.cards.CommunitySet;
-import javafx.util.Pair;
+import com.texas.holdem.elements.cards.HoleSet;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 public class HandAnalyzer {
 
