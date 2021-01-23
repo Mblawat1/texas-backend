@@ -181,6 +181,7 @@ public class RoomService {
 
         if (checked == notPassed.size() && commSet.size() < 5) {
             if(notPassed.stream().anyMatch(n -> n.isAllIn())){
+                System.out.println("all in");
                 while(commSet.size()<5)
                     commSet.add(deck.getFirst());
             }
