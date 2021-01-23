@@ -110,7 +110,7 @@ public class Room {
         startingPlayer.setStarting(false);
 
         var higherPlayer = players.stream()
-                .filter(n -> n.getId() > startingPlayer.getId())
+                .filter(n -> n.getId() > startingPlayer.getId() && n.getBudget() != 0)
                 .findFirst();
 
         if (higherPlayer.isPresent())
