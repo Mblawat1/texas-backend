@@ -18,13 +18,13 @@ import java.util.stream.Collectors;
 
 @Service
 public class RoomService {
+    @Autowired
     private HashMap<RoomId, Room> rooms;
 
     @Autowired
     HandAnalyzer handAnalyzer;
 
     public RoomService() {
-        rooms = new HashMap<RoomId, Room>();
     }
 
     //returnuje room id
@@ -41,6 +41,7 @@ public class RoomService {
 
     /**
      * <h3>Generuje unikalne id</h3>
+     *
      * @param length długość id
      * @return id jako String
      */
@@ -75,6 +76,7 @@ public class RoomService {
 
     /**
      * <h3>Szuka pokoju o podanym id</h3>
+     *
      * @param id id pokoju
      * @return Pokój
      * @throws ResponseStatusException z HttpStatus.NOT_FOUND jeśli pokoju nie ma
@@ -126,7 +128,7 @@ public class RoomService {
 
         players.forEach(n -> n.setPass(false));
 
-        var bigBlind = room.getStartingBudget()/50;
+        var bigBlind = room.getStartingBudget() / 50;
 
         players.forEach(n -> {
             if (n.isStarting()) {
@@ -136,19 +138,19 @@ public class RoomService {
 
                 var lowestId = players.get(0).getId();
                 Player smallBlind;
-                if(n.getId() == lowestId) {
+                if (n.getId() == lowestId) {
                     smallBlind = players.get(players.size() - 1);
-                } else{
+                } else {
                     smallBlind = players.stream()
                             .filter(p -> p.getId() < n.getId())
                             .max(Comparator.comparing(Player::getId)).get();
                 }
-                smallBlind.setBet(bigBlind/2);
-                smallBlind.subBudget(bigBlind/2);
+                smallBlind.setBet(bigBlind / 2);
+                smallBlind.subBudget(bigBlind / 2);
             }
         });
-        
-        room.addCoinsInRound(bigBlind + bigBlind/2);
+
+        room.addCoinsInRound(bigBlind + bigBlind / 2);
 
         var deck = room.getDeck();
         deck.shuffle();
@@ -161,7 +163,7 @@ public class RoomService {
         room.getTable().setMaxBet(bigBlind);
     }
 
-    public void dealCards(String roomId){
+    public void dealCards(String roomId) {
         var room = getRoomOrThrow(roomId);
         var players = room.getPlayers();
         var notPassed = room.getNotPassedPlayers();
@@ -171,12 +173,12 @@ public class RoomService {
         var commSet = table.getCommunitySet();
         var deck = room.getDeck();
 
-        if(checked == notPassed.size() && commSet.size()<5){
-            if(commSet.size() == 0){
+        if (checked == notPassed.size() && commSet.size() < 5) {
+            if (commSet.size() == 0) {
                 commSet.add(deck.getFirst());
                 commSet.add(deck.getFirst());
                 commSet.add(deck.getFirst());
-            }else
+            } else
                 commSet.add(deck.getFirst());
             players.forEach(n -> n.setBet(0));
             table.setMaxBet(0);
@@ -185,16 +187,16 @@ public class RoomService {
         }
     }
 
-    public Optional<List<String>> getWinners(String roomId){
+    public Optional<List<String>> getWinners(String roomId) {
         var room = getRoomOrThrow(roomId);
         var notPassed = room.getNotPassedPlayers();
         var table = room.getTable();
 
         var checked = notPassed.stream().filter(n -> n.isCheck()).count();
 
-        if(checked == notPassed.size()){
+        if (checked == notPassed.size()) {
             ArrayList<HandOutcome> outcomes = new ArrayList<>();
-            notPassed.forEach(p -> outcomes.add(handAnalyzer.getPlayersWinningHand(p.getId(),p.getHoleSet(),table.getCommunitySet())));
+            notPassed.forEach(p -> outcomes.add(handAnalyzer.getPlayersWinningHand(p.getId(), p.getHoleSet(), table.getCommunitySet())));
             ArrayList<Integer> winnersIds = handAnalyzer.getWinner(outcomes);
 
             var winners = notPassed
@@ -202,7 +204,7 @@ public class RoomService {
                     .filter(p -> winnersIds.contains(p.getId()))
                     .collect(Collectors.toList());
 
-            var prize = table.getCoinsInRound()/winners.size();
+            var prize = table.getCoinsInRound() / winners.size();
             winners.forEach(p -> p.addBudget(prize));
             table.setCoinsInRound(0);
             var winnersList = winners.stream().map(n -> n.getNickname()).collect(Collectors.toList());
