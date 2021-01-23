@@ -122,15 +122,18 @@ public class RoomService {
     public void startRound(String roomId) {
         var room = getRoomOrThrow(roomId);
         var players = room.getPlayers();
+        var notBankrupts = players.stream().filter(p -> p.getBudget() > 0).collect(Collectors.toList());
 
         if (players.size() < 2)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough players");
+        if (notBankrupts.size() < 2)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "One of players is bankrupt");
 
         players.forEach(n -> n.setPass(false));
 
         var bigBlind = room.getStartingBudget() / 50;
 
-        players.stream().filter(n -> n.getBudget() > 0).forEach(n -> {
+        players.forEach(n -> {
             if (n.getBudget() <= 0)
                 n.setPass(true);
             if (n.isStarting()) {
@@ -138,12 +141,12 @@ public class RoomService {
                 n.setBet(bigBlind);
                 n.subBudget(bigBlind);
 
-                var lowestId = players.get(0).getId();
+                var lowestId = notBankrupts.get(0).getId();
                 Player smallBlind;
                 if (n.getId() == lowestId) {
-                    smallBlind = players.get(players.size() - 1);
+                    smallBlind = notBankrupts.get(notBankrupts.size() - 1);
                 } else {
-                    smallBlind = players.stream()
+                    smallBlind = notBankrupts.stream()
                             .filter(p -> p.getId() < n.getId())
                             .max(Comparator.comparing(Player::getId)).get();
                 }
@@ -205,6 +208,8 @@ public class RoomService {
                     .stream()
                     .filter(p -> winnersIds.contains(p.getId()))
                     .collect(Collectors.toList());
+
+
 
             var prize = table.getCoinsInRound() / winners.size();
             winners.forEach(p -> p.addBudget(prize));
