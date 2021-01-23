@@ -119,6 +119,7 @@ public class Room {
             players.get(0).setStarting(true);
     }
 
+    @JsonIgnore
     public List<Player> getNotPassedPlayers(){
         return players.stream()
                 .filter(n -> !n.isPass())
