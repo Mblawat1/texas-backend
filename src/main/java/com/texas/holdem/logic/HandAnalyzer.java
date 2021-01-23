@@ -108,14 +108,48 @@ public class HandAnalyzer {
     }
 
     public ArrayList<Integer> getWinner(List<HandOutcome> playersBestHands) {
-        ArrayList<Integer> winnerID = new ArrayList<>();
-        int winningHand = 0;
-        int onHighestIncluded = 0;
-        int onSingleHighest = 0;
-        for (int i = 0; i < playersBestHands.size(); i++) {
-
+        Collections.sort(playersBestHands);
+        int size = playersBestHands.size();
+        System.out.println(playersBestHands);
+        //ROYAL_FLUSH nie pojawi się u więcej niż 1 gracza jednocześnie
+        if (playersBestHands.get(size-1).getHandValue() == 9) {
+            ArrayList<Integer> winnerID = new ArrayList<>();
+            winnerID.add(playersBestHands.get(size-1).getPlayerId());
+            return winnerID;
         }
-        return winnerID;
+        if (size > 1 && playersBestHands.get(size-1).getHandValue() != 2 && playersBestHands.get(size-1).getHandValue() != 6
+                && playersBestHands.get(size-1).getHandValue() == playersBestHands.get(size-2).getHandValue()
+        && playersBestHands.get(size-1).getHighestIncluded() == playersBestHands.get(size-2).getHighestIncluded()
+        && playersBestHands.get(size-1).getSingleHighest() == playersBestHands.get(size-2).getSingleHighest()) {
+            ArrayList<Integer> winnerID = new ArrayList<>();
+            winnerID.add(playersBestHands.get(size-1).getPlayerId());
+            winnerID.add(playersBestHands.get(size-2).getPlayerId());
+            return winnerID;
+        }
+        else if (size > 1 && playersBestHands.get(size-1).getHandValue() == 2 || playersBestHands.get(size-1).getHandValue() == 6
+        && playersBestHands.get(size-1).getHandValue() == playersBestHands.get(size-2).getHandValue()
+        && playersBestHands.get(size-1).getHighestIncluded() == playersBestHands.get(size-2).getHighestIncluded()) {
+            if (playersBestHands.get(size-1).getSecondHighestIncluded() > playersBestHands.get(size-2).getSecondHighestIncluded()) {
+                ArrayList<Integer> winnerID = new ArrayList<>();
+                winnerID.add(playersBestHands.get(size-1).getPlayerId());
+                return winnerID;
+            }
+            else if (playersBestHands.get(size-1).getSecondHighestIncluded() < playersBestHands.get(size-2).getSecondHighestIncluded()) {
+                ArrayList<Integer> winnerID = new ArrayList<>();
+                winnerID.add(playersBestHands.get(size-2).getPlayerId());
+                return winnerID;
+            }
+            else {
+                ArrayList<Integer> winnerID = new ArrayList<>();
+                winnerID.add(playersBestHands.get(size-1).getPlayerId());
+                winnerID.add(playersBestHands.get(size-2).getPlayerId());
+                return winnerID;
+            }
+        } else {
+            ArrayList<Integer> winnerID = new ArrayList<>();
+            winnerID.add(playersBestHands.get(size - 1).getPlayerId());
+            return winnerID;
+        }
     }
 
 }

@@ -31,8 +31,16 @@ public class HoldemApplication {
         ArrayList<Card> set = analyzer.makeSet(hs, cs);
         List<ArrayList<Card>> possibleSets = analyzer.makeFiveHandSets(set);
         HandOutcome playerOutcome = analyzer.getPlayersWinningHand(possibleSets);
-        System.out.println(analyzer.translateHand(playerOutcome.getHandValue()) + " on " + playerOutcome.getHighestIncluded() + " on set " + playerOutcome.getBestSet());
+        playerOutcome.setPlayerId(1);
+        HandOutcome secondOutcome = new HandOutcome.Builder(8)
+                .withHighestIncluded(13)
+                .ofPlayer(2)
+                .build();
 
+        List<HandOutcome> outcomes = new ArrayList<>();
+        outcomes.add(playerOutcome);
+        outcomes.add(secondOutcome);
+        System.out.println(analyzer.getWinner(outcomes));
     }
 
 }

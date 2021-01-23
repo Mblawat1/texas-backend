@@ -23,8 +23,9 @@ public class HandUtilities {
     public List<Integer> getNCount(ArrayList<Card> set, int n) {
         int nCount = 0;
         List<Integer> findings = new ArrayList<>();
-        //findings structure: first: highest card by number, (optional) second, then first highest card included in a set,
-        //number of n-sized combinations found in a set
+        //struktura findings: pierwszy: wartość bezwzględnie najwyższej karty w ręce, kolejne: najwyższa zawarta w kombinacji, (opcjonalnie) druga najwyższa
+        //ostatni element: ilość znalezionych tego typu kombinacji w ręce
+        //1 dla 1 pary, trójki, czwórki; 2 dla 2 par
         ArrayList<Integer> valuesSet = sortSet(set);
         findings.add(valuesSet.get(valuesSet.size()-1));
         Map<Integer, Integer> occurrences = new HashMap<>();
@@ -119,6 +120,7 @@ public class HandUtilities {
             HandOutcome outcome = new HandOutcome.Builder(6)
                     .withSingleHighest(singleHighest)
                     .withHighestIncluded(threeOutcome.getHighestIncluded())
+                    .withNextHighestIncluded(pairOutcome.getHighestIncluded())
                     .build();
             return outcome;
         }
