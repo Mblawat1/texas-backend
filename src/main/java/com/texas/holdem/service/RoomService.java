@@ -202,6 +202,7 @@ public class RoomService {
             winners.forEach(p -> p.addBudget(prize));
             table.setCoinsInRound(0);
             var winnersList = winners.stream().map(n -> n.getNickname()).collect(Collectors.toList());
+            startRound(roomId);
             return Optional.of(winnersList);
         }
         return Optional.empty();
