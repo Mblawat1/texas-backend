@@ -176,6 +176,8 @@ public class RoomService {
                 commSet.add(deck.getFirst());
             }else
                 commSet.add(deck.getFirst());
+            players.forEach(n -> n.setBet(0));
+            table.setMaxBet(0);
             players.forEach(n -> n.setCheck(false));
             notPassed.forEach(n -> n.setLastAction(null));
         }
