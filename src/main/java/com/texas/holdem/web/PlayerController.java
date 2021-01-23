@@ -56,7 +56,6 @@ public class PlayerController {
         var winners = roomService.getWinners(roomId);
         winners.ifPresent(n -> messagingTemplate.convertAndSend("/topic/room/" + roomId, new Winners("winner",n)));
 
-        roomService.startRound(roomId);
         messagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
         return ResponseEntity.ok().build();
     }
