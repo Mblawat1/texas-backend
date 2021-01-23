@@ -3,6 +3,7 @@ package com.texas.holdem.elements.cards;
 import lombok.*;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 @Getter
 @Setter
