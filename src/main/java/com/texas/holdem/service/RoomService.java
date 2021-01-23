@@ -135,8 +135,6 @@ public class RoomService {
         var bigBlind = room.getStartingBudget() / 50;
 
         players.forEach(n -> {
-            if (n.getBudget() <= 0)
-                n.setPass(true);
             if (n.isStarting()) {
                 room.nextTurn(n.getId());
                 n.setBet(bigBlind);
@@ -210,11 +208,6 @@ public class RoomService {
                     .filter(p -> winnersIds.contains(p.getId()))
                     .collect(Collectors.toList());
 
-            var winningHands = outcomes.stream()
-                    .filter(n -> winnersIds.contains(n.getPlayerId()))
-                    .map(n -> handAnalyzer.translateHand(n.getPlayerId()))
-                    .collect(Collectors.toList());
-
             var prize = table.getCoinsInRound() / winners.size();
             winners.forEach(p -> p.addBudget(prize));
             table.setCoinsInRound(0);
@@ -225,6 +218,7 @@ public class RoomService {
                                 .map(n -> n.getHandValue()).findFirst().orElse(1));
                 winnersList.add(new Winner(player.getNickname(),hand));
             }
+            room.nextStarting();
             startRound(roomId);
             return Optional.of(winnersList);
         }
