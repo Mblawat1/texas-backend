@@ -23,6 +23,12 @@ public class PlayerService {
                 .max(Comparator.comparingInt(Player::getBet))
                 .map(n -> n.getBet()).orElse(0);
 
+        if(player.getBudget()<maxBet) {
+            player.setPass(true);
+            room.nextTurn(playerId);
+            return;
+        }
+
         if (player.isPass())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Player passed");
         if (!player.isActive())

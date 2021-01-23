@@ -127,10 +127,9 @@ public class RoomService {
 
         if (players.size() < 2)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough players");
-        if (notBankrupts.size() < 2)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "One of players is bankrupt");
-
-        players.forEach(n -> n.setPass(false));
+        if (notBankrupts.size() < 2){
+            players.forEach(n -> n.setPass(false));
+        }
 
         var bigBlind = room.getStartingBudget() / 50;
 
@@ -188,11 +187,13 @@ public class RoomService {
                 commSet.add(deck.getFirst());
                 commSet.add(deck.getFirst());
                 commSet.add(deck.getFirst());
-            } else
+                players.forEach(n -> n.setCheck(false));
+            } else {
                 commSet.add(deck.getFirst());
+                players.forEach(n -> n.setCheck(false));
+            }
             players.forEach(n -> n.setBet(0));
             table.setMaxBet(0);
-            players.forEach(n -> n.setCheck(false));
             notPassed.forEach(n -> n.setLastAction(null));
         }
     }
