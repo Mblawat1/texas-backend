@@ -36,7 +36,7 @@ public class PlayerService {
         var table = room.getTable();
         table.setMaxBet(player.getBet());
 
-        if (player.getBudget() == 0) {
+        if (player.getBudget() == 0 && !player.isAllIn()) {
             player.setLastAction("All in");
             player.setAllIn(true);
             notPassed.forEach(n -> n.setCheck(false));
