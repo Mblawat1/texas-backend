@@ -3,9 +3,12 @@ package com.texas.holdem.logic;
 import com.texas.holdem.elements.cards.Card;
 import com.texas.holdem.elements.cards.HoleSet;
 import com.texas.holdem.elements.cards.CommunitySet;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+@Service
 public class HandAnalyzer {
 
     HandUtilities utility = new HandUtilities();
@@ -48,11 +51,11 @@ public class HandAnalyzer {
         return sortedSet.get(sortedSet.size()-1);
     }
 
-    public ArrayList<Card> makeSet(HoleSet holeSet, CommunitySet communitySet) {
+    public ArrayList<Card> makeSet(HoleSet holeSet, List<Card> communitySet) {
         ArrayList<Card> totalSet = new ArrayList<>();
         totalSet.add(holeSet.getHoleCard1());
         totalSet.add(holeSet.getHoleCard2());
-        totalSet.addAll(communitySet.getCommunitySet());
+        totalSet.addAll(communitySet);
         return totalSet;
     }
 
@@ -72,7 +75,7 @@ public class HandAnalyzer {
         return sets;
     }
 
-    public HandOutcome getPlayersWinningHand(int id, HoleSet holeSet, CommunitySet communitySet) {
+    public HandOutcome getPlayersWinningHand(int id, HoleSet holeSet, List<Card> communitySet) {
         List<ArrayList<Card>> playerSets = makeFiveHandSets(makeSet(holeSet, communitySet));
         int finalHandValue = 0;
         int finalSingleHighest = 0;
