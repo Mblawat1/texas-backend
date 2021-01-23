@@ -207,54 +207,6 @@ public class HandAnalyzer {
             winnerID.add(playersBestHands.get(size-1).getPlayerId());
             return winnerID;
         }
-        /*//jeśli w układach z jedną składową, która składa się z 5 kart, np. STRAIGHT, FLUSH,
-        // gracze mają te same najwyższe karty w układzie i te same najwyższe karty w ogóle (w układach to dopuszczających)
-        //obaj wygrywają
-        if ((size > 1 && playersBestHands.get(size-1).getHandValue() == playersBestHands.get(size-2).getHandValue()
-                && playersBestHands.get(size-1).getHandValue() != 2 && playersBestHands.get(size-1).getHandValue() != 6)
-                && playersBestHands.get(size-1).getHighestIncluded() == playersBestHands.get(size-2).getHighestIncluded()
-                && playersBestHands.get(size-1).getFirstHighestExcluded() == playersBestHands.get(size-2).getFirstHighestExcluded()) {
-            ArrayList<Integer> winnerID = new ArrayList<>();
-            winnerID.add(playersBestHands.get(size-1).getPlayerId());
-            winnerID.add(playersBestHands.get(size-2).getPlayerId());
-            return winnerID;
-        }
-        //w układach z dwiema składowymi: FULL_HOUSE, TWO_PAIRS, jeśli najwyższa zawarta karta jest taka sama, sprawdzamy następną najwyższą
-        //drugą parę w przypadku TWO_PAIRS i parę po trójce w przypadku FULL_HOUSE
-        //jeśli wartości są te same, obaj gracze wygrywają
-        else if ((size > 1 && playersBestHands.get(size-1).getHandValue() == 2 || playersBestHands.get(size-1).getHandValue() == 6)
-                && playersBestHands.get(size-1).getHandValue() == playersBestHands.get(size-2).getHandValue()
-                && playersBestHands.get(size-1).getHighestIncluded() == playersBestHands.get(size-2).getHighestIncluded()) {
-            if (playersBestHands.get(size-1).getSecondHighestIncluded() > playersBestHands.get(size-2).getSecondHighestIncluded()) {
-                ArrayList<Integer> winnerID = new ArrayList<>();
-                winnerID.add(playersBestHands.get(size-1).getPlayerId());
-                return winnerID;
-            }
-            else if (playersBestHands.get(size-1).getSecondHighestIncluded() < playersBestHands.get(size-2).getSecondHighestIncluded()) {
-                ArrayList<Integer> winnerID = new ArrayList<>();
-                winnerID.add(playersBestHands.get(size-2).getPlayerId());
-                return winnerID;
-            }
-            //w TWO_PAIRS: jeśli gracze mają te same pary, sprawdzimy jeszcze piątą kartę
-            else if (playersBestHands.get(size-1).getSecondHighestIncluded() == playersBestHands.get(size-2).getSecondHighestIncluded()){
-                if(playersBestHands.get(size-1).getFirstHighestExcluded() == playersBestHands.get(size-2).getFirstHighestExcluded()) {
-                    ArrayList<Integer> winnerID = new ArrayList<>();
-                    winnerID.add(playersBestHands.get(size - 1).getPlayerId());
-                    winnerID.add(playersBestHands.get(size - 2).getPlayerId());
-                    return winnerID;
-                }
-                else if (playersBestHands.get(size-1).getFirstHighestExcluded() > playersBestHands.get(size-2).getFirstHighestExcluded()) {
-                    ArrayList<Integer> winnerID = new ArrayList<>();
-                    winnerID.add(playersBestHands.get(size - 1).getPlayerId());
-                    return winnerID;
-                }
-                else {
-                    ArrayList<Integer> winnerID = new ArrayList<>();
-                    winnerID.add(playersBestHands.get(size - 2).getPlayerId());
-                    return winnerID;
-                }
-            }
-        }*/
         HandOutcome outcome1 = playersBestHands.get(size-1);
         HandOutcome outcome2 = playersBestHands.get(size-2);
         if (outcome1.getHandValue() == outcome2.getHandValue() && outcome1.getHighestIncluded() == outcome2.getHighestIncluded()
