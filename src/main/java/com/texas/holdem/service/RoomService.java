@@ -179,18 +179,22 @@ public class RoomService {
         var commSet = table.getCommunitySet();
         var deck = room.getDeck();
 
-        if (checked == notPassed.size() && commSet.size() < 5) {
+        if(checked == notPassed.size() && notPassed.stream().anyMatch(n -> n.isAllIn())){
+            while(commSet.size()<5){
+                commSet.add(deck.getFirst());
+            }
+        }else if (checked == notPassed.size() && commSet.size() < 5) {
             if (commSet.size() == 0) {
                 commSet.add(deck.getFirst());
                 commSet.add(deck.getFirst());
                 commSet.add(deck.getFirst());
             } else
                 commSet.add(deck.getFirst());
-            players.forEach(n -> n.setBet(0));
-            table.setMaxBet(0);
-            players.forEach(n -> n.setCheck(false));
-            notPassed.forEach(n -> n.setLastAction(null));
         }
+        players.forEach(n -> n.setBet(0));
+        table.setMaxBet(0);
+        players.forEach(n -> n.setCheck(false));
+        notPassed.forEach(n -> n.setLastAction(null));
     }
 
     public Optional<List<Winner>> getWinners(String roomId) {
@@ -221,6 +225,7 @@ public class RoomService {
                 winnersList.add(new Winner(player.getNickname(),hand));
             }
             room.nextStarting();
+            notPassed.forEach(n -> n.setAllIn(false));
             startRound(roomId);
             return Optional.of(winnersList);
         }

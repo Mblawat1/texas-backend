@@ -22,6 +22,8 @@ public class Player {
     private boolean starting;
     @JsonIgnore
     private boolean check;
+    @JsonIgnore
+    private boolean allIn;
     private boolean ready;
     private String lastAction;
 
@@ -36,6 +38,7 @@ public class Player {
         starting = false;
         check = false;
         ready = false;
+        allIn = false;
     }
 
     public void addBet(int bet) {
