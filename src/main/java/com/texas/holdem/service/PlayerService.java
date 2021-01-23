@@ -62,7 +62,7 @@ public class PlayerService {
             }else
                 commSet.add(deck.getFirst());
             players.forEach(n -> n.setCheck(false));
-            players.forEach(n -> n.setLastAction(null));
+            notPassed.forEach(n -> n.setLastAction(null));
         }
 
     }
