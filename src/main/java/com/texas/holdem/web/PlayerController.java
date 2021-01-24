@@ -8,14 +8,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
+import java.util.Date;
 
 @RestController
 public class PlayerController {
@@ -28,6 +31,20 @@ public class PlayerController {
 
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
+
+    @Autowired
+    @Qualifier("threadPoolTaskScheduler")
+    TaskScheduler taskScheduler;
+
+    @AllArgsConstructor
+    class NewRoundTask implements Runnable {
+        String roomId;
+        @Override
+        public void run() {
+            roomService.startRound(roomId);
+            messagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
+        }
+    }
 
     @Getter
     @Setter
@@ -59,8 +76,7 @@ public class PlayerController {
         messagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
 
         winners.ifPresent(n -> {
-            roomService.startRound(roomId);
-            messagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
+            taskScheduler.schedule(new NewRoundTask(roomId),new Date(System.currentTimeMillis() + 5000));
         });
         return ResponseEntity.ok().build();
     }
