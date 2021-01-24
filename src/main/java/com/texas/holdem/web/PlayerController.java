@@ -76,6 +76,8 @@ public class PlayerController {
         messagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
 
         winners.ifPresent(n -> {
+            var room = roomService.getRoomOrThrow(roomId);
+            room.getPlayers().forEach(p -> p.setActive(false));
             taskScheduler.schedule(new NewRoundTask(roomId),new Date(System.currentTimeMillis() + 5000));
         });
         return ResponseEntity.ok().build();
@@ -98,6 +100,12 @@ public class PlayerController {
                                 Collections.singletonList(win))));
 
         messagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
+
+        winner.ifPresent(n -> {
+            var room = roomService.getRoomOrThrow(roomId);
+            room.getPlayers().forEach(p -> p.setActive(false));
+            taskScheduler.schedule(new NewRoundTask(roomId),new Date(System.currentTimeMillis() + 5000));
+        });
 
         return ResponseEntity.ok().build();
     }
