@@ -203,7 +203,7 @@ public class RoomService {
 
         var checked = notPassed.stream().filter(n -> n.isCheck()).count();
 
-        if (checked == notPassed.size()) {
+        if (checked == notPassed.size() || notPassed.stream().allMatch(n -> n.isAllIn())) {
             ArrayList<HandOutcome> outcomes = new ArrayList<>();
             notPassed.forEach(p -> outcomes.add(handAnalyzer.getPlayersWinningHand(p.getId(), p.getHoleSet(), table.getCommunitySet())));
             ArrayList<Integer> winnersIds = handAnalyzer.getWinner(outcomes);
