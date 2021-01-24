@@ -71,13 +71,12 @@ public class PlayerController {
         playerService.setBet(roomId, playerId, amount.bet);
         roomService.dealCards(roomId);
         var winners = roomService.getWinners(roomId);
+        messagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
         winners.ifPresent(n -> {
             messagingTemplate.convertAndSend("/topic/room/" + roomId, new Winners("winner", n));
             var room = roomService.getRoomOrThrow(roomId);
             room.getPlayers().forEach(p -> p.setActive(false));
         });
-
-        messagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
 
         winners.ifPresent(n -> {
             taskScheduler.schedule(new NewRoundTask(roomId),new Date(System.currentTimeMillis() + 5000));
@@ -97,13 +96,12 @@ public class PlayerController {
         playerService.pass(roomId, playerId);
 
         var winner = roomService.checkAllPassed(roomId);
+        messagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
         winner.ifPresent(win -> {
             messagingTemplate.convertAndSend("/topic/room/" + roomId, new Winners("winner", Collections.singletonList(win)));
             var room = roomService.getRoomOrThrow(roomId);
             room.getPlayers().forEach(p -> p.setActive(false));
         });
-
-        messagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
 
         winner.ifPresent(n -> {
             taskScheduler.schedule(new NewRoundTask(roomId),new Date(System.currentTimeMillis() + 5000));
