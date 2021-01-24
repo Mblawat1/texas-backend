@@ -90,11 +90,12 @@ public class Room {
                 .filter(n -> !n.isPass() && n.getId() > playerId)
                 .findFirst();
         //jeśli jest z wyższym id to zmieniam jego
+        Player pla;
         if (higherId.isPresent()) {
-            var pla = higherId.get();
+            pla = higherId.get();
             pla.setActive(true);
         } else if (lowerId.isPresent()) {
-            var pla = lowerId.get();
+            pla = lowerId.get();
             pla.setActive(true);
         }
     }

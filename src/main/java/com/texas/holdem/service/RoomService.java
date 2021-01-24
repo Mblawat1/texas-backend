@@ -138,6 +138,9 @@ public class RoomService {
         players.forEach(n -> {
             if(n.getBudget() <= 0)
                 n.setPass(true);
+        });
+
+        players.forEach(n -> {
             if (n.isStarting()) {
                 room.nextTurn(n.getId());
                 n.setBet(bigBlind);
