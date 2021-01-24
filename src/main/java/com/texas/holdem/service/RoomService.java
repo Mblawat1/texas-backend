@@ -123,6 +123,7 @@ public class RoomService {
     public void startRound(String roomId) {
         var room = getRoomOrThrow(roomId);
         var players = room.getPlayers();
+        room.getTable().getCommunitySet().clear();
         var notBankrupts = players.stream().filter(p -> p.getBudget() > 0).collect(Collectors.toList());
 
         if (players.size() < 2)
@@ -160,8 +161,6 @@ public class RoomService {
 
         var deck = room.getDeck();
         deck.shuffle();
-
-        room.getTable().getCommunitySet().clear();
 
         notBankrupts.forEach(n -> n.setHoleSet(new HoleSet(deck.getFirst(), deck.getFirst())));
 

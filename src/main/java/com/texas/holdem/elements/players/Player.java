@@ -18,10 +18,11 @@ public class Player {
     private int avatar;
     private boolean pass;
     private boolean active;
-    @JsonIgnore
+//    @JsonIgnore
     private boolean starting;
-    @JsonIgnore
+//    @JsonIgnore
     private boolean check;
+    //@JsonIgnore
     private boolean allIn;
     private boolean ready;
     private String lastAction;
