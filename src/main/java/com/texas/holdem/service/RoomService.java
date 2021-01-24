@@ -170,6 +170,7 @@ public class RoomService {
         });
 
         players.forEach(n -> {
+            n.setLastAction(null);
             if (n.isStarting()) {
                 room.nextTurn(n.getId());
                 n.setBet(bigBlind);
