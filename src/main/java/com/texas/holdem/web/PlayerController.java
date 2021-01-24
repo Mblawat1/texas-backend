@@ -70,18 +70,15 @@ public class PlayerController {
     public ResponseEntity<?> placeBet(@PathVariable String roomId, @PathVariable int playerId, @RequestBody Amount amount) {
         playerService.setBet(roomId, playerId, amount.bet);
         roomService.dealCards(roomId);
+        messagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
         var winners = roomService.getWinners(roomId);
         winners.ifPresent(n -> {
             messagingTemplate.convertAndSend("/topic/room/" + roomId, new Winners("winner", n));
             var room = roomService.getRoomOrThrow(roomId);
             room.getPlayers().forEach(p -> p.setActive(false));
-        });
-
-        winners.ifPresent(n -> {
             taskScheduler.schedule(new NewRoundTask(roomId),new Date(System.currentTimeMillis() + 5000));
         });
-        if(winners.isEmpty())
-            messagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
+
         return ResponseEntity.ok().build();
     }
 
@@ -95,20 +92,15 @@ public class PlayerController {
     @PutMapping("/api/room/{roomId}/player/{playerId}/pass")
     public ResponseEntity<?> pass(@PathVariable String roomId, @PathVariable int playerId) {
         playerService.pass(roomId, playerId);
+        messagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
 
         var winner = roomService.checkAllPassed(roomId);
         winner.ifPresent(win -> {
             messagingTemplate.convertAndSend("/topic/room/" + roomId, new Winners("winner", Collections.singletonList(win)));
             var room = roomService.getRoomOrThrow(roomId);
             room.getPlayers().forEach(p -> p.setActive(false));
-        });
-
-        winner.ifPresent(n -> {
             taskScheduler.schedule(new NewRoundTask(roomId),new Date(System.currentTimeMillis() + 5000));
         });
-
-        if(winner.isEmpty())
-            messagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
 
         return ResponseEntity.ok().build();
     }
