@@ -10,6 +10,9 @@ import java.util.HashMap;
 @Configuration
 public class BeansConfig {
 
+    /**
+     * bean z pokojami
+     */
     @Bean
     public HashMap<RoomId, Room> rooms(){
         return new HashMap<>();

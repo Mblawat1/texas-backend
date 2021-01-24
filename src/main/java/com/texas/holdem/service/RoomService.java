@@ -29,7 +29,10 @@ public class RoomService {
     public RoomService() {
     }
 
-    //returnuje room id
+    /**
+     * <h3>Tworzenie pokoju</h3>
+     * @return Id utworzonego pokoju
+     */
     public String createRoom() {
         RoomId id;
         do {
@@ -57,6 +60,12 @@ public class RoomService {
         return new RoomId(sb.toString());
     }
 
+    /**
+     * <h3>Dodaje gracza do pokoju</h3>
+     * @param roomId id pokoju
+     * @return id nowo utworzonego gracza
+     * @throws ResponseStatusException, BAD_REQUEST jeśli pokój jest pełny
+     */
     public int addPlayer(String roomId, PlayerDTO playerDTO) {
         var room = getRoomOrThrow(roomId);
         if (room.getPlayers().size() == 6)
@@ -65,6 +74,11 @@ public class RoomService {
         return room.addPlayer(playerDTO);
     }
 
+    /**
+     * <h3>Usuwanie gracza z pokoju</h3>
+     * @param roomId id pokoju
+     * @param playerId id gracza
+     */
     public void deletePlayer(String roomId, int playerId) {
         var room = getRoomOrThrow(roomId);
 
@@ -91,11 +105,20 @@ public class RoomService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Room not found");
     }
 
+    /**
+     * <h3>Usuwanie pokoju</h3>
+     * @param id id pokoju
+     */
     public void deleteRoom(String id) {
         var roomId = new RoomId(id);
         rooms.remove(roomId);
     }
 
+    /**
+     * <h3>Sprawdzanie czy wszyscy spasowali</h3>
+     * @param roomId id pokoju
+     * @return Optional ze zwycięzcą jeśli wszyscy spasowali, pusty jeśli nie
+     */
     public Optional<Winner> checkAllPassed(String roomId) {
         var room = getRoomOrThrow(roomId);
 
@@ -121,6 +144,12 @@ public class RoomService {
         return Optional.empty();
     }
 
+    /**
+     * <h3>Startowanie rundy</h3>
+     * @param roomId id pokoju
+     * @throws ResponseStatusException BAD_REQUEST jeśli jest mniej niż 2 graczy
+     * @throws ResponseStatusException BAD_REQUEST jeśli jest mniej niż dwóch bankrutów
+     */
     public void startRound(String roomId) {
         var room = getRoomOrThrow(roomId);
         var players = room.getPlayers();
@@ -171,6 +200,10 @@ public class RoomService {
         room.getTable().setMaxBet(bigBlind);
     }
 
+    /**
+     * <h3>Rozdawanie kart</h3>
+     * @param roomId id pokoju
+     */
     public void dealCards(String roomId) {
         var room = getRoomOrThrow(roomId);
         var players = room.getPlayers();
@@ -199,6 +232,11 @@ public class RoomService {
         }
     }
 
+    /**
+     * <h3>Wyszukiwanie zwycięzców po każdym becie</h3>
+     * @param roomId id pokoju
+     * @return Optional ze zwycięzcami jeśli wszyscy sprawdzili, pusty jeśli nie
+     */
     public Optional<List<Winner>> getWinners(String roomId) {
         var room = getRoomOrThrow(roomId);
         var notPassed = room.getNotPassedPlayers();

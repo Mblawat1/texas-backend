@@ -14,6 +14,12 @@ public class PlayerService {
     @Autowired
     RoomService roomService;
 
+    /**
+     * <h3>Zwiększanie betu gracza</h3>
+     * @param roomId id pokoju
+     * @param playerId id gracza
+     * @param bet wysokość zakładu którą dokładamy do zakłądu
+     */
     public void setBet(String roomId, int playerId, int bet) {
         var room = roomService.getRoomOrThrow(roomId);
         var player = room.getPlayerOrThrow(playerId);
@@ -52,6 +58,11 @@ public class PlayerService {
         room.nextTurn(playerId);
     }
 
+    /**
+     * <h3>Pasowanie</h3>
+     * @param roomId id pokoju
+     * @param playerId id gracza
+     */
     public void pass(String roomId, int playerId) {
         var room = roomService.getRoomOrThrow(roomId);
         var player = room.getPlayerOrThrow(playerId);
@@ -69,6 +80,11 @@ public class PlayerService {
 
     }
 
+    /**
+     * <h3>Zmiana gotowaści gracza</h3>
+     * @param roomId id pokoju
+     * @param playerId id gracza
+     */
     public void setReady(String roomId, int playerId) {
         var room = roomService.getRoomOrThrow(roomId);
         var player = room.getPlayerOrThrow(playerId);
@@ -82,6 +98,12 @@ public class PlayerService {
 
     }
 
+    /**
+     * <h3>Funkcja pomocznicza dla betowania</h3>
+     * @param player gracz
+     * @param room pokój
+     * @param bet zakłau
+     */
     private void betHelper(Player player, Room room, int bet) {
         player.addBet(bet);
         player.subBudget(bet);

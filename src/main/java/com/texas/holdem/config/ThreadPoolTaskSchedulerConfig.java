@@ -5,6 +5,9 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
+/**
+ * Konfiguracja Task Schedulera
+ */
 @Configuration
 public class ThreadPoolTaskSchedulerConfig {
     @Bean

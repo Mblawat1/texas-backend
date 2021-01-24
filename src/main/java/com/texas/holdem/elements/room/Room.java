@@ -77,6 +77,10 @@ public class Room {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Player not found"));
     }
 
+    /**
+     * <h3>Zmiania gracza którego jest to aktualnie aktywny na następnego w kolejce</h3>
+     * @param playerId id gracza który jest teraz aktywny
+     */
     public void nextTurn(int playerId) {
         var activePlayer = getPlayerOrThrow(playerId);
 
@@ -104,6 +108,10 @@ public class Room {
         table.addCoinsInRound(bet);
     }
 
+    /**
+     * <h3>Następny startujący</h3>
+     * <p>Po zakończeniu rozdania zmienia gracza na następnego który wchodzi jako big blind </p>
+     */
     public void nextStarting() {
         var optStartingPlayer = players.stream().filter(n -> n.isStarting()).findFirst();
         var startingPlayer = optStartingPlayer
@@ -120,6 +128,10 @@ public class Room {
             players.get(0).setStarting(true);
     }
 
+    /**
+     * <h3>Nie spasowani gracze</h3>
+     * @return lista nie spasowanych graczy
+     */
     @JsonIgnore
     public List<Player> getNotPassedPlayers(){
         return players.stream()
