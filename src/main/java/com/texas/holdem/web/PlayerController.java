@@ -57,6 +57,11 @@ public class PlayerController {
         winners.ifPresent(n -> messagingTemplate.convertAndSend("/topic/room/" + roomId, new Winners("winner",n)));
 
         messagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
+
+        winners.ifPresent(n -> {
+            roomService.startRound(roomId);
+            messagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
+        });
         return ResponseEntity.ok().build();
     }
 

@@ -11,6 +11,7 @@ import com.texas.holdem.logic.HandAnalyzer;
 import com.texas.holdem.logic.HandOutcome;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -130,7 +131,6 @@ public class RoomService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough players");
         if (notBankrupts.size() < 2)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "One of players is bankrupt");
-
         players.forEach(n -> n.setPass(false));
 
         var bigBlind = room.getStartingBudget() / 50;
@@ -225,7 +225,6 @@ public class RoomService {
             }
             room.nextStarting();
             notPassed.forEach(n -> n.setAllIn(false));
-            startRound(roomId);
             return Optional.of(winnersList);
         }
         return Optional.empty();
