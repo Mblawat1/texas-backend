@@ -107,6 +107,9 @@ public class PlayerController {
             taskScheduler.schedule(new NewRoundTask(roomId),new Date(System.currentTimeMillis() + 5000));
         });
 
+        if(winner.isEmpty())
+            messagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
+
         return ResponseEntity.ok().build();
     }
 
