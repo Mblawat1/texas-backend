@@ -137,8 +137,6 @@ public class RoomService {
             room.nextStarting();
             room.getTable().getCommunitySet().clear();
 
-            startRound(roomId);
-
             return Optional.of(new Winner(winner.getNickname(),"Everyone passed"));
         }
         return Optional.empty();
