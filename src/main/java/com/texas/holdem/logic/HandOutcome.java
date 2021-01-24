@@ -17,7 +17,7 @@ public class HandOutcome implements Comparable<HandOutcome>{
     private int handValue;
     private int highestIncluded; //może być też wartość najwyższej karty w trójce w FULL_HOUSE
     private int secondHighestIncluded; //może być też wartość najwyższej karty w parze w FULL_HOUSE
-    private int firstHighestExcluded; //albo po prostu najwyższa w układach na 5 kart
+    private int firstHighestExcluded; //albo po prostu kicker spoza układu
     private int secondHighestExcluded;
     private int thirdHighestExcluded;
     private ArrayList<Card> bestSet;

@@ -13,6 +13,7 @@ public class HandAnalyzer {
 
     public HandAnalyzer() { }
 
+    //podawanie nazwy znalezionego w ręce układu na podstawie jego numeru
     public String translateHand(int handNumber) {
         String handName = new String();
         Map<Integer, String> hierarchy = new HashMap<Integer, String>();
@@ -30,7 +31,7 @@ public class HandAnalyzer {
         return handName;
     }
 
-
+    //w danej ręce złożonej z pięciu kart szukany i zwracany jest najlepszy znaleziony układ
     public HandOutcome getHandOutcome(ArrayList<Card> set) {
         if (utility.checkRoyalFlush(set).getHandValue() == 9) return utility.checkRoyalFlush(set);
         else if (utility.checkStraightFlush(set).getHandValue() == 8) return utility.checkStraightFlush(set);
@@ -44,6 +45,7 @@ public class HandAnalyzer {
         return new HandOutcome.Builder(0).build();
     }
 
+    //tylko w wypadku, gdy nie znaleziono żadnego sensownego układu, zwracany jest set 5 najwyższych kart spośród posortowanych rosnąco 7
     public HandOutcome makeSetOfHighCards(ArrayList<Card> set) {
         ArrayList<Integer> sortedSet = utility.sortSet(set);
         HandOutcome outcome = new HandOutcome.Builder(0)
@@ -56,6 +58,7 @@ public class HandAnalyzer {
         return outcome;
     }
 
+    //tworzenie pełnego setu 7 kart z 5 kart community i dwóch kart hole gracza
     public ArrayList<Card> makeSet(HoleSet holeSet, List<Card> communitySet) {
         ArrayList<Card> totalSet = new ArrayList<>();
         totalSet.add(holeSet.getHoleCard1());
@@ -64,6 +67,8 @@ public class HandAnalyzer {
         return totalSet;
     }
 
+    //budowanie wszystkich możliwych permutacji 5 kart (bez powtórzeń) z 7, które stanowi hole set gracza i community set
+    //dopuszczony przypadek użycia jedynie 5 kart ze stołu jako ręki gracza
     public List<ArrayList<Card>> makeFiveHandSets(ArrayList<Card> set) {
         List<ArrayList<Card>> sets = new ArrayList<>();
         String[] allPerms = {"01234","01235","01236","01245","01246","01256","01345","01346","01356","01456","02345","02346","02356","02456","03456","12345","12346","12356","12456","13456","23456"};
@@ -80,8 +85,12 @@ public class HandAnalyzer {
         return sets;
     }
 
+    //wybieranie najlepszej ręki gracza spośród wszystkich permutacji - lecimy z każdą ręką po kolei
+    //w razie znalezienia lepszej ręki nadpisujemy dane final_, które na końcu ustawiane są jako własności finalnej ręki
     public HandOutcome getPlayersWinningHand(int id, HoleSet holeSet, ArrayList<Card> communitySet) {
         List<ArrayList<Card>> playerSets = makeFiveHandSets(makeSet(holeSet, communitySet));
+        //numery z wszystkich 7 kart będą służyć do znajdowania najwyższych kart obok
+        // FOUR_OF_A_KIND, THREE_OF_A_KIND, TWO_PAIR i PAIR oraz HIGH_CARD
         List<Integer> ranks = utility.sortSet(makeSet(holeSet, communitySet));
         int finalHandValue = 0;
         int finalHighestIncluded = 0;
@@ -92,12 +101,14 @@ public class HandAnalyzer {
 
         ArrayList<Card> finalWinningHand = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
+            //jeśli znaleziony zostaje ROYAL_FLUSH, nie szukamy dalej
             HandOutcome outcome = getHandOutcome(playerSets.get(i));
             if (outcome.getHandValue() == 9) {
                 outcome.setBestSet(playerSets.get(i));
                 outcome.setPlayerId(id);
                 return outcome;
             }
+            //porównanie na podstawie samego układu
             if (outcome.getHandValue() > finalHandValue) {
                 finalHandValue = outcome.getHandValue();
                 finalHighestIncluded = outcome.getHighestIncluded();
@@ -107,6 +118,7 @@ public class HandAnalyzer {
                 finalThirdHighestExcluded = outcome.getThirdHighestExcluded();
                 finalWinningHand = playerSets.get(i);
             }
+            //jeśli wartość układów jest równa, porównujemy najwyższe karty, na których się one opierają
             else if (outcome.getHandValue() == finalHandValue && outcome.getHighestIncluded() > finalHighestIncluded) {
                 finalHighestIncluded = outcome.getHighestIncluded();
                 finalSecondIncluded = outcome.getSecondHighestIncluded();
@@ -114,6 +126,7 @@ public class HandAnalyzer {
                 finalSecondHighestExcluded = outcome.getSecondHighestExcluded();
                 finalWinningHand = playerSets.get(i);
             }
+            //jeśli i one są równe, porównujemy kickery
             else if (outcome.getHandValue() == finalHandValue && outcome.getHighestIncluded() == finalHighestIncluded && outcome.getFirstHighestExcluded() > finalFirstHighestExcluded) {
                 finalFirstHighestExcluded = outcome.getFirstHighestExcluded();
                 finalSecondIncluded = outcome.getSecondHighestIncluded();
@@ -122,6 +135,7 @@ public class HandAnalyzer {
                 finalWinningHand = playerSets.get(i);
             }
         }
+        //dorzucanie najlepszych kickerów, ewentualnie drugich kart, trzecich kart do układów niezajmujących 5 kart
         if (finalHandValue == 7) {
             for (int i = 6; i > 0; i--) {
                 if (ranks.get(i) != finalHighestIncluded) {
@@ -176,11 +190,14 @@ public class HandAnalyzer {
                 }
             }
         }
+        //zwrócenie układu złożonego jedynie z najwyższych kart
         else if (finalHandValue == 0) {
             HandOutcome outcome = makeSetOfHighCards(makeSet(holeSet, communitySet));
             outcome.setPlayerId(id);
             return outcome;
         }
+
+        //zwrócenie finalnego układu
         return new HandOutcome.Builder(finalHandValue)
                 .ofPlayer(id)
                 .withHighestIncluded(finalHighestIncluded)
@@ -192,6 +209,7 @@ public class HandAnalyzer {
                 .build();
     }
 
+    //wybranie zwycięzcy na podstawie posortowanej listy najlepszych rąk graczy
     public ArrayList<Integer> getWinner(List<HandOutcome> playersBestHands) {
         Collections.sort(playersBestHands);
         playersBestHands.forEach(hand -> System.out.println(hand.getPlayerId() + " " +  hand.getHighestIncluded()));

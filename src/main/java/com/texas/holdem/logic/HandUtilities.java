@@ -13,6 +13,7 @@ import java.util.*;
 public class HandUtilities {
     private ArrayList<Card> set;
 
+    //posortowanie wartości kart rosnąco
     public ArrayList<Integer> sortSet(ArrayList<Card> set) {
         ArrayList<Integer> valuesSet = new ArrayList<>();
         set.forEach(card -> valuesSet.add(card.getRank()));
@@ -20,6 +21,7 @@ public class HandUtilities {
         return valuesSet;
     }
 
+    //policzenie ilości kombinacji z n kart w ręce celem zwrócenia czwórki, trójki, dwóch par lub pary
     public List<Integer> getNCount(ArrayList<Card> set, int n) {
         int nCount = 0;
         List<Integer> findings = new ArrayList<>();
@@ -42,6 +44,7 @@ public class HandUtilities {
         return findings;
     }
 
+    //sprawdzenie, czy kolory kart w ręce się zgadzają
     public boolean checkSuitsEquality(ArrayList<Card> set) {
         String suit = set.get(0).getSuit();
         boolean ifRightSuit = true;
@@ -54,6 +57,7 @@ public class HandUtilities {
         return ifRightSuit;
     }
 
+    //FUNKCJE SPRAWDZAJĄCE WYSTĘPOWANIE DANYCH UKŁADÓW W RĘCE
 
     public HandOutcome checkRoyalFlush(ArrayList<Card> fiveHandSet) {
         ArrayList<Integer> ranks = sortSet(fiveHandSet);
