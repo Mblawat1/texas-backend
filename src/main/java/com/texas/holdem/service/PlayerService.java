@@ -36,15 +36,17 @@ public class PlayerService {
         var table = room.getTable();
         table.setMaxBet(player.getBet());
 
-        if (player.getBudget() == 0 && !player.isAllIn()) {
+        if (player.getBudget() == 0) {
             player.setLastAction("All in");
             player.setAllIn(true);
-            notPassed.forEach(n -> n.setCheck(false));
         } else if (player.getBet() > maxBet) {
             notPassed.forEach(n -> n.setCheck(false));
             player.setLastAction("raise");
         } else
             player.setLastAction("call");
+
+        if (notPassed.stream().filter(n -> n.isAllIn()).count() == 1)
+            notPassed.forEach(n -> n.setCheck(false));
 
         player.setCheck(true);
         room.nextTurn(playerId);
