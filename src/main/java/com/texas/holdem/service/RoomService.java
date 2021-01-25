@@ -81,12 +81,29 @@ public class RoomService {
      */
     public void deletePlayer(String roomId, int playerId) {
         var room = getRoomOrThrow(roomId);
+        var players = room.getPlayers();
 
         var player = room.getPlayerOrThrow(playerId);
 
         if (player.isActive())
             room.nextTurn(playerId);
         room.deletePlayer(playerId);
+
+        if(players.size() == 1){
+            var table = room.getTable();
+            var lastPlayer = players.get(0);
+            lastPlayer.addBudget(lastPlayer.getBet());
+            lastPlayer.setBet(0);
+            lastPlayer.setCheck(false);
+            lastPlayer.setAllIn(false);
+            lastPlayer.setPass(false);
+            lastPlayer.setActive(false);
+            lastPlayer.setStarting(true);
+            lastPlayer.setReady(false);
+            table.setMaxBet(0);
+            table.setCoinsInRound(0);
+            table.setStatus("lobby");
+        }
     }
 
 
