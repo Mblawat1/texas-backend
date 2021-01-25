@@ -31,6 +31,7 @@ public class RoomService {
 
     /**
      * <h3>Tworzenie pokoju</h3>
+     *
      * @return Id utworzonego pokoju
      */
     public String createRoom() {
@@ -62,6 +63,7 @@ public class RoomService {
 
     /**
      * <h3>Dodaje gracza do pokoju</h3>
+     *
      * @param roomId id pokoju
      * @return id nowo utworzonego gracza
      * @throws ResponseStatusException, BAD_REQUEST jeśli pokój jest pełny
@@ -76,7 +78,8 @@ public class RoomService {
 
     /**
      * <h3>Usuwanie gracza z pokoju</h3>
-     * @param roomId id pokoju
+     *
+     * @param roomId   id pokoju
      * @param playerId id gracza
      */
     public void deletePlayer(String roomId, int playerId) {
@@ -89,7 +92,7 @@ public class RoomService {
             room.nextTurn(playerId);
         room.deletePlayer(playerId);
 
-        if(players.stream().filter(n -> !n.isPass()).count() == 1){
+        if (players.stream().filter(n -> !n.isPass()).count() == 1) {
             var table = room.getTable();
             var lastPlayer = players.get(0);
             lastPlayer.addBudget(lastPlayer.getBet());
@@ -101,6 +104,7 @@ public class RoomService {
             lastPlayer.setStarting(true);
             lastPlayer.setReady(false);
             lastPlayer.setHoleSet(new HoleSet());
+            lastPlayer.setWholeRoundBet(0);
             table.setMaxBet(0);
             table.setCoinsInRound(0);
             table.getCommunitySet().clear();
@@ -126,6 +130,7 @@ public class RoomService {
 
     /**
      * <h3>Usuwanie pokoju</h3>
+     *
      * @param id id pokoju
      */
     public void deleteRoom(String id) {
@@ -135,6 +140,7 @@ public class RoomService {
 
     /**
      * <h3>Sprawdzanie czy wszyscy spasowali</h3>
+     *
      * @param roomId id pokoju
      * @return Optional ze zwycięzcą jeśli wszyscy spasowali, pusty jeśli nie
      */
@@ -156,13 +162,14 @@ public class RoomService {
             room.nextStarting();
             room.getTable().getCommunitySet().clear();
 
-            return Optional.of(new Winner(winner.getId(),winner.getNickname(),"Last not folded player"));
+            return Optional.of(new Winner(winner.getId(), winner.getNickname(), "Last not folded player"));
         }
         return Optional.empty();
     }
 
     /**
      * <h3>Startowanie rundy</h3>
+     *
      * @param roomId id pokoju
      * @throws ResponseStatusException BAD_REQUEST jeśli jest mniej niż 2 graczy
      * @throws ResponseStatusException BAD_REQUEST jeśli jest mniej niż dwóch bankrutów
@@ -182,7 +189,7 @@ public class RoomService {
         var bigBlind = room.getStartingBudget() / 50;
 
         players.forEach(n -> {
-            if(n.getBudget() <= 0)
+            if (n.getBudget() <= 0)
                 n.setPass(true);
             else
                 n.setPass(false);
@@ -190,6 +197,7 @@ public class RoomService {
             n.setAllIn(false);
             n.setLastAction(null);
             n.setBet(0);
+            n.setWholeRoundBet(0);
         });
 
         players.forEach(n -> {
@@ -225,6 +233,7 @@ public class RoomService {
 
     /**
      * <h3>Rozdawanie kart</h3>
+     *
      * @param roomId id pokoju
      */
     public void dealCards(String roomId) {
@@ -238,11 +247,10 @@ public class RoomService {
         var deck = room.getDeck();
 
         if (checked == notPassed.size() && commSet.size() < 5) {
-            if(notPassed.stream().anyMatch(n -> n.isAllIn())){
-                while(commSet.size()<5)
+            if (notPassed.stream().anyMatch(n -> n.isAllIn())) {
+                while (commSet.size() < 5)
                     commSet.add(deck.getFirst());
-            }
-            else if (commSet.size() == 0) {
+            } else if (commSet.size() == 0) {
                 commSet.add(deck.getFirst());
                 commSet.add(deck.getFirst());
                 commSet.add(deck.getFirst());
@@ -257,6 +265,7 @@ public class RoomService {
 
     /**
      * <h3>Wyszukiwanie zwycięzców po każdym becie</h3>
+     *
      * @param roomId id pokoju
      * @return Optional ze zwycięzcami jeśli wszyscy sprawdzili, pusty jeśli nie
      */
@@ -277,18 +286,36 @@ public class RoomService {
                     .filter(p -> winnersIds.contains(p.getId()))
                     .collect(Collectors.toList());
 
-            var prize = table.getCoinsInRound() / winners.size();
-            winners.forEach(p -> p.addBudget(prize));
-            table.setCoinsInRound(0);
+            var prize = table.getCoinsInRound();
             var winnersList = new ArrayList<Winner>();
-            for(Player player: winners){
+
+//            if(winners.size() > 1 && winners.stream().anyMatch(n -> n.isAllIn())) {
+//                winners.forEach(winner -> {
+//                    int winnersBets = winners.stream().mapToInt(n -> n.getWholeRoundBet()).sum();
+//                    if (!winner.isAllIn())
+//                        winner.addBudget(prize / winners.size());
+//
+//                });
+//            }else
+            if (winners.size() == 1 && winners.get(0).isAllIn()) {
+                var winner = winners.get(0);
+                notPassed.forEach(n -> {
+                    int diff = Math.abs(n.getWholeRoundBet() - winner.getWholeRoundBet());
+                    winner.addBudget(n.getWholeRoundBet() - diff);
+                    table.setCoinsInRound(table.getCoinsInRound() + diff);
+                });
+            } else {
+                winners.forEach(p -> p.addBudget(prize));
+                table.setCoinsInRound(0);
+            }
+            for (Player player : winners) {
                 var hand = handAnalyzer
                         .translateHand(outcomes.stream().filter(n -> n.getPlayerId() == player.getId())
                                 .map(n -> n.getHandValue()).findFirst().orElse(1));
-                winnersList.add(new Winner(player.getId(),player.getNickname(),hand));
+                winnersList.add(new Winner(player.getId(), player.getNickname(), hand));
             }
             room.nextStarting();
-            notPassed.forEach(n -> n.setAllIn(false));
+
             return Optional.of(winnersList);
         }
         return Optional.empty();

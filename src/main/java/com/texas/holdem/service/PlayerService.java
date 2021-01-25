@@ -35,7 +35,7 @@ public class PlayerService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "It isn't your turn");
         if (player.getBudget() < bet)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Your budget is too low");
-        if (player.getBet() + bet < maxBet)
+        if (player.getBet() + bet < maxBet && player.getBudget()-bet > 0)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Your bet is too low");
 
         betHelper(player, room, bet);
@@ -107,6 +107,7 @@ public class PlayerService {
     private void betHelper(Player player, Room room, int bet) {
         player.addBet(bet);
         player.subBudget(bet);
+        player.addWholeRoundBet(bet);
         room.addCoinsInRound(bet);
     }
 

@@ -24,6 +24,8 @@ public class Player {
     private boolean check;
     @JsonIgnore
     private boolean allIn;
+    @JsonIgnore
+    private int wholeRoundBet;
     private boolean ready;
     private String lastAction;
 
@@ -51,6 +53,10 @@ public class Player {
 
     public void addBudget(int prize) {
         budget += prize;
+    }
+
+    public void addWholeRoundBet(int bet){
+        wholeRoundBet += bet;
     }
 
 }
