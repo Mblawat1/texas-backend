@@ -146,21 +146,30 @@ public class RoomService {
      */
     public Optional<Winner> checkAllPassed(String roomId) {
         var room = getRoomOrThrow(roomId);
+        var players = room.getPlayers();
+        var table = room.getTable();
 
         var notPassed = room.getNotPassedPlayers();
         if (notPassed.size() == 1) {
             var winner = notPassed.get(0);
             var prize = room.getTable().getCoinsInRound();
 
-            winner.addBudget(prize);
-            room.getPlayers().forEach(n -> {
-                n.setBet(0);
-                n.setPass(false);
-                n.setActive(false);
-            });
-            room.getTable().setCoinsInRound(0);
+            if (winner.isAllIn()) {
+                table.setCoinsInRound(0);
+                players.stream().filter(n -> n != winner).forEach(n -> {
+                    int diff = 0;
+                    if (winner.getWholeRoundBet()< n.getWholeRoundBet())
+                        diff = Math.abs(n.getWholeRoundBet() - winner.getWholeRoundBet());
+                    winner.addBudget(n.getWholeRoundBet() - diff);
+                    table.setCoinsInRound(table.getCoinsInRound() + diff);
+                });
+                winner.addBudget(winner.getWholeRoundBet());
+            }else {
+                table.setCoinsInRound(0);
+                winner.addBudget(prize);
+            }
+
             room.nextStarting();
-            room.getTable().getCommunitySet().clear();
 
             return Optional.of(new Winner(winner.getId(), winner.getNickname(), "Last not folded player"));
         }
@@ -282,6 +291,7 @@ public class RoomService {
         var room = getRoomOrThrow(roomId);
         var notPassed = room.getNotPassedPlayers();
         var table = room.getTable();
+        var players = room.getPlayers();
 
         var checked = notPassed.stream().filter(n -> n.isCheck()).count();
 
@@ -308,7 +318,7 @@ public class RoomService {
             if (winners.size() == 1 && winners.get(0).isAllIn()) {
                 var winner = winners.get(0);
                 table.setCoinsInRound(0);
-                notPassed.stream().filter(n -> n != winner).forEach(n -> {
+                players.stream().filter(n -> n != winner).forEach(n -> {
                     int diff = 0;
                     if (winner.getWholeRoundBet()< n.getWholeRoundBet())
                         diff = Math.abs(n.getWholeRoundBet() - winner.getWholeRoundBet());
