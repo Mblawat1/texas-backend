@@ -44,6 +44,7 @@ public class PlayerService {
 
         if (player.getBudget() == 0) {
             player.setLastAction("All in");
+            notPassed.forEach(n -> n.setCheck(false));
             player.setAllIn(true);
         } else if (player.getBet() > maxBet) {
             notPassed.forEach(n -> n.setCheck(false));
