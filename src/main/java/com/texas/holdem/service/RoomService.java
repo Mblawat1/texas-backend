@@ -182,9 +182,6 @@ public class RoomService {
 
         if (players.size() < 2)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough players");
-        if (notBankrupts.size() < 2)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "One of players is bankrupt");
-
 
         var bigBlind = room.getStartingBudget() / 50;
 
@@ -200,35 +197,37 @@ public class RoomService {
             n.setWholeRoundBet(0);
         });
 
-        players.forEach(n -> {
-            if (n.isStarting()) {
-                room.nextTurn(n.getId());
-                n.setBet(bigBlind);
-                n.subBudget(bigBlind);
+        if(notBankrupts.size() > 1) {
+            players.forEach(n -> {
+                if (n.isStarting()) {
+                    room.nextTurn(n.getId());
+                    n.setBet(bigBlind);
+                    n.subBudget(bigBlind);
 
-                var lowestId = notBankrupts.get(0).getId();
-                Player smallBlind;
-                if (n.getId() == lowestId) {
-                    smallBlind = notBankrupts.get(notBankrupts.size() - 1);
-                } else {
-                    smallBlind = notBankrupts.stream()
-                            .filter(p -> p.getId() < n.getId())
-                            .max(Comparator.comparing(Player::getId)).get();
+                    var lowestId = notBankrupts.get(0).getId();
+                    Player smallBlind;
+                    if (n.getId() == lowestId) {
+                        smallBlind = notBankrupts.get(notBankrupts.size() - 1);
+                    } else {
+                        smallBlind = notBankrupts.stream()
+                                .filter(p -> p.getId() < n.getId())
+                                .max(Comparator.comparing(Player::getId)).get();
+                    }
+                    smallBlind.setBet(bigBlind / 2);
+                    smallBlind.subBudget(bigBlind / 2);
                 }
-                smallBlind.setBet(bigBlind / 2);
-                smallBlind.subBudget(bigBlind / 2);
-            }
-        });
+            });
 
-        room.addCoinsInRound(bigBlind + bigBlind / 2);
+            room.addCoinsInRound(bigBlind + bigBlind / 2);
 
-        var deck = room.getDeck();
-        deck.shuffle();
+            var deck = room.getDeck();
+            deck.shuffle();
 
-        notBankrupts.forEach(n -> n.setHoleSet(new HoleSet(deck.getFirst(), deck.getFirst())));
+            notBankrupts.forEach(n -> n.setHoleSet(new HoleSet(deck.getFirst(), deck.getFirst())));
 
-        room.getTable().setStatus("game");
-        room.getTable().setMaxBet(bigBlind);
+            room.getTable().setStatus("game");
+            room.getTable().setMaxBet(bigBlind);
+        }
     }
 
     /**
