@@ -195,6 +195,7 @@ public class RoomService {
             n.setLastAction(null);
             n.setBet(0);
             n.setWholeRoundBet(0);
+            n.setHoleSet(new HoleSet());
             n.setActive(false);
         });
 
@@ -232,6 +233,7 @@ public class RoomService {
             room.getTable().setMaxBet(bigBlind);
         }else
             players.forEach(n -> n.setReady(false));
+
 
     }
 
