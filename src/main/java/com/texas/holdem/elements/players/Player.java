@@ -20,7 +20,6 @@ public class Player {
     private boolean active;
     @JsonIgnore
     private boolean starting;
-    @JsonIgnore
     private boolean check;
     private boolean allIn;
     @JsonIgnore

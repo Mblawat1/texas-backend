@@ -195,6 +195,7 @@ public class RoomService {
             n.setLastAction(null);
             n.setBet(0);
             n.setWholeRoundBet(0);
+            n.setActive(false);
         });
 
         if(notBankrupts.size() > 1) {
@@ -290,14 +291,13 @@ public class RoomService {
             var prize = table.getCoinsInRound();
             var winnersList = new ArrayList<Winner>();
 
-//            if(winners.size() > 1 && winners.stream().anyMatch(n -> n.isAllIn())) {
-//                winners.forEach(winner -> {
-//                    int winnersBets = winners.stream().mapToInt(n -> n.getWholeRoundBet()).sum();
-//                    if (!winner.isAllIn())
-//                        winner.addBudget(prize / winners.size());
-//
-//                });
-//            }else
+            if(winners.size() > 1 && winners.stream().anyMatch(n -> n.isAllIn())) {
+                winners.forEach(winner -> {
+                    double percent = winner.getWholeRoundBet()/(prize * 1.0);
+                    winner.addBudget((int) Math.round(prize * percent));
+                    table.setCoinsInRound(0);
+                });
+            }else
             if (winners.size() == 1 && winners.get(0).isAllIn()) {
                 var winner = winners.get(0);
                 table.setCoinsInRound(0);
