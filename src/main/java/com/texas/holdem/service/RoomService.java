@@ -89,7 +89,7 @@ public class RoomService {
             room.nextTurn(playerId);
         room.deletePlayer(playerId);
 
-        if(players.size() == 1){
+        if(players.stream().filter(n -> !n.isPass()).count() == 1){
             var table = room.getTable();
             var lastPlayer = players.get(0);
             lastPlayer.addBudget(lastPlayer.getBet());
