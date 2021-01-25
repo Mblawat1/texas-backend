@@ -227,7 +227,9 @@ public class RoomService {
 
             room.getTable().setStatus("game");
             room.getTable().setMaxBet(bigBlind);
-        }
+        }else
+            players.forEach(n -> n.setReady(false));
+
     }
 
     /**
