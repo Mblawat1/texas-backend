@@ -51,6 +51,9 @@ public class PlayerService {
         } else
             player.setLastAction("call");
 
+        if (notPassed.stream().filter(n -> n.isAllIn()).count() == 1)
+            notPassed.forEach(n -> n.setCheck(false));
+
         player.setCheck(true);
         room.nextTurn(playerId);
     }
