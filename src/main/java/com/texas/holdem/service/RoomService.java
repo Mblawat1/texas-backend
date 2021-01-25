@@ -307,6 +307,7 @@ public class RoomService {
                     winner.addBudget(n.getWholeRoundBet() - diff);
                     table.setCoinsInRound(table.getCoinsInRound() + diff);
                 });
+                winner.addBudget(winner.getWholeRoundBet());
             } else {
                 winners.forEach(p -> p.addBudget(prize/winners.size()));
                 table.setCoinsInRound(0);

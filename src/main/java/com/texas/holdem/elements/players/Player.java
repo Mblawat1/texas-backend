@@ -22,7 +22,6 @@ public class Player {
     private boolean starting;
     @JsonIgnore
     private boolean check;
-    @JsonIgnore
     private boolean allIn;
     @JsonIgnore
     private int wholeRoundBet;
