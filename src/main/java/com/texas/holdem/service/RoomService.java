@@ -256,10 +256,14 @@ public class RoomService {
                 commSet.add(deck.getFirst());
                 commSet.add(deck.getFirst());
                 commSet.add(deck.getFirst());
-            } else
+                players.forEach(n -> n.setCheck(false));
+            } else {
                 commSet.add(deck.getFirst());
+                players.forEach(n -> n.setCheck(false));
+            }
             players.forEach(n -> n.setBet(0));
             table.setMaxBet(0);
+
             notPassed.forEach(n -> n.setLastAction(null));
         }
     }
