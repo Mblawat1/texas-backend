@@ -299,13 +299,14 @@ public class RoomService {
 //            }else
             if (winners.size() == 1 && winners.get(0).isAllIn()) {
                 var winner = winners.get(0);
+                table.setCoinsInRound(0);
                 notPassed.forEach(n -> {
                     int diff = Math.abs(n.getWholeRoundBet() - winner.getWholeRoundBet());
                     winner.addBudget(n.getWholeRoundBet() - diff);
                     table.setCoinsInRound(table.getCoinsInRound() + diff);
                 });
             } else {
-                winners.forEach(p -> p.addBudget(prize));
+                winners.forEach(p -> p.addBudget(prize/winners.size()));
                 table.setCoinsInRound(0);
             }
             for (Player player : winners) {
