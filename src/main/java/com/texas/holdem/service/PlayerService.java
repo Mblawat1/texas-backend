@@ -38,15 +38,21 @@ public class PlayerService {
         if (player.getBet() + bet < maxBet && player.getBudget() - bet != 0)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Your bet is too low");
 
+        var allins = notPassed.stream().filter(n -> n.isAllIn()).count();
+
         betHelper(player, room, bet);
         var table = room.getTable();
-        table.setMaxBet(player.getBet());
+        if(player.getBet() > table.getMaxBet())
+            table.setMaxBet(player.getBet());
 
-        if (player.getBudget() == 0) {
+        if (player.getBudget() == 0 && allins == 0) {
             player.setLastAction("All in");
             notPassed.forEach(n -> n.setCheck(false));
             player.setAllIn(true);
-        } else if (player.getBet() > maxBet) {
+        } else if(player.getBudget() == 0){
+            player.setLastAction("All in");
+            player.setAllIn(true);
+        }else if (player.getBet() > maxBet) {
             notPassed.forEach(n -> n.setCheck(false));
             player.setLastAction("raise");
         } else
