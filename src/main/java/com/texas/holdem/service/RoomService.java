@@ -204,6 +204,7 @@ public class RoomService {
                     room.nextTurn(n.getId());
                     n.setBet(bigBlind);
                     n.subBudget(bigBlind);
+                    n.setWholeRoundBet(bigBlind);
 
                     var lowestId = notBankrupts.get(0).getId();
                     Player smallBlind;
@@ -216,6 +217,7 @@ public class RoomService {
                     }
                     smallBlind.setBet(bigBlind / 2);
                     smallBlind.subBudget(bigBlind / 2);
+                    smallBlind.setWholeRoundBet(bigBlind/2);
                 }
             });
 
