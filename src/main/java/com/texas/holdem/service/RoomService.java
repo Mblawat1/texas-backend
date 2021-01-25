@@ -300,8 +300,10 @@ public class RoomService {
             if (winners.size() == 1 && winners.get(0).isAllIn()) {
                 var winner = winners.get(0);
                 table.setCoinsInRound(0);
-                notPassed.forEach(n -> {
-                    int diff = Math.abs(n.getWholeRoundBet() - winner.getWholeRoundBet());
+                notPassed.stream().filter(n -> n != winner).forEach(n -> {
+                    int diff = 0;
+                    if (winner.getWholeRoundBet()< n.getWholeRoundBet())
+                        diff = Math.abs(n.getWholeRoundBet() - winner.getWholeRoundBet());
                     winner.addBudget(n.getWholeRoundBet() - diff);
                     table.setCoinsInRound(table.getCoinsInRound() + diff);
                 });
