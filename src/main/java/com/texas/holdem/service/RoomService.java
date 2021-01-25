@@ -103,6 +103,7 @@ public class RoomService {
             lastPlayer.setHoleSet(new HoleSet());
             table.setMaxBet(0);
             table.setCoinsInRound(0);
+            table.getCommunitySet().clear();
             table.setStatus("lobby");
         }
     }
