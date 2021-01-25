@@ -96,10 +96,11 @@ public class RoomService {
             lastPlayer.setBet(0);
             lastPlayer.setCheck(false);
             lastPlayer.setAllIn(false);
-            lastPlayer.setPass(false);
+            lastPlayer.setPass(true);
             lastPlayer.setActive(false);
             lastPlayer.setStarting(true);
             lastPlayer.setReady(false);
+            lastPlayer.setHoleSet(new HoleSet());
             table.setMaxBet(0);
             table.setCoinsInRound(0);
             table.setStatus("lobby");
