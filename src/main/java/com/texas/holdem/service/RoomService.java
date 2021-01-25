@@ -137,7 +137,7 @@ public class RoomService {
             room.nextStarting();
             room.getTable().getCommunitySet().clear();
 
-            return Optional.of(new Winner(winner.getId(),winner.getNickname(),"Everyone passed"));
+            return Optional.of(new Winner(winner.getId(),winner.getNickname(),"Last not folded player"));
         }
         return Optional.empty();
     }
