@@ -137,7 +137,7 @@ public class RoomService {
             room.nextStarting();
             room.getTable().getCommunitySet().clear();
 
-            return Optional.of(new Winner(winner.getNickname(),"Everyone passed"));
+            return Optional.of(new Winner(winner.getId(),winner.getNickname(),"Everyone passed"));
         }
         return Optional.empty();
     }
@@ -261,7 +261,7 @@ public class RoomService {
                 var hand = handAnalyzer
                         .translateHand(outcomes.stream().filter(n -> n.getPlayerId() == player.getId())
                                 .map(n -> n.getHandValue()).findFirst().orElse(1));
-                winnersList.add(new Winner(player.getNickname(),hand));
+                winnersList.add(new Winner(player.getId(),player.getNickname(),hand));
             }
             room.nextStarting();
             notPassed.forEach(n -> n.setAllIn(false));

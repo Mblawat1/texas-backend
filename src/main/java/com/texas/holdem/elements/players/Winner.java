@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Winner {
+    private int id;
     private String nickname;
     private String winningHand;
 }
