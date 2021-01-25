@@ -159,6 +159,9 @@ public class RoomService {
         if (notBankrupts.size() < 2)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "One of players is bankrupt");
         players.forEach(n -> n.setPass(false));
+        players.forEach(n -> n.setCheck(false));
+        players.forEach(n -> n.setAllIn(false));
+        players.forEach(n -> n.setLastAction(null));
 
         var bigBlind = room.getStartingBudget() / 50;
 
@@ -168,7 +171,6 @@ public class RoomService {
         });
 
         players.forEach(n -> {
-            n.setLastAction(null);
             if (n.isStarting()) {
                 room.nextTurn(n.getId());
                 n.setBet(bigBlind);
