@@ -309,8 +309,9 @@ public class RoomService {
             var winnersList = new ArrayList<Winner>();
 
             if(winners.size() > 1 && winners.stream().anyMatch(n -> n.isAllIn())) {
+                var winnersMoney = winners.stream().mapToInt(n -> n.getWholeRoundBet()).sum();
                 winners.forEach(winner -> {
-                    double percent = winner.getWholeRoundBet()/(prize * 1.0);
+                    double percent = winner.getWholeRoundBet()/(winnersMoney * 1.0);
                     winner.addBudget((int) Math.round(prize * percent));
                     table.setCoinsInRound(0);
                 });
@@ -321,7 +322,7 @@ public class RoomService {
                 players.stream().filter(n -> n != winner).forEach(n -> {
                     int diff = 0;
                     if (winner.getWholeRoundBet()< n.getWholeRoundBet())
-                        diff = Math.abs(n.getWholeRoundBet() - winner.getWholeRoundBet());
+                        diff = n.getWholeRoundBet() - winner.getWholeRoundBet();
                     winner.addBudget(n.getWholeRoundBet() - diff);
                     table.setCoinsInRound(table.getCoinsInRound() + diff);
                 });
