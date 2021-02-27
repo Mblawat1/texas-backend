@@ -1,6 +1,7 @@
 package com.texas.holdem.web;
 
 import com.texas.holdem.elements.players.Winners;
+import com.texas.holdem.elements.room.Room;
 import com.texas.holdem.service.PlayerService;
 import com.texas.holdem.service.RoomService;
 import lombok.AllArgsConstructor;
@@ -38,11 +39,11 @@ public class PlayerController {
 
     @AllArgsConstructor
     class NewRoundTask implements Runnable {
-        String roomId;
+        Room room;
         @Override
         public void run() {
-            roomService.startRound(roomId);
-            messagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
+            roomService.startRound(room);
+            messagingTemplate.convertAndSend("/topic/room/" + room.getId(), room);
         }
     }
 
@@ -68,15 +69,17 @@ public class PlayerController {
     //zwiękasznie betów
     @PutMapping("/api/room/{roomId}/player/{playerId}")
     public ResponseEntity<?> placeBet(@PathVariable String roomId, @PathVariable int playerId, @RequestBody Amount amount) {
-        playerService.setBet(roomId, playerId, amount.bet);
-        roomService.dealCards(roomId);
-        messagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
-        var winners = roomService.getWinners(roomId);
+        var room = roomService.getRoomOrThrow(roomId);
+        var player = room.getPlayerOrThrow(playerId);
+
+        playerService.setBet(room, player, amount.bet);
+        roomService.dealCards(room);
+        messagingTemplate.convertAndSend("/topic/room/" + roomId, room);
+        var winners = roomService.getWinners(room);
         winners.ifPresent(n -> {
             messagingTemplate.convertAndSend("/topic/room/" + roomId, new Winners("winner", n));
-            var room = roomService.getRoomOrThrow(roomId);
             room.getPlayers().forEach(p -> p.setActive(false));
-            taskScheduler.schedule(new NewRoundTask(roomId),new Date(System.currentTimeMillis() + 5000));
+            taskScheduler.schedule(new NewRoundTask(room),new Date(System.currentTimeMillis() + 5000));
         });
 
         return ResponseEntity.ok().build();
@@ -91,16 +94,18 @@ public class PlayerController {
      */
     @PutMapping("/api/room/{roomId}/player/{playerId}/pass")
     public ResponseEntity<?> pass(@PathVariable String roomId, @PathVariable int playerId) {
-        playerService.pass(roomId, playerId);
-        roomService.dealCards(roomId);
-        messagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
+        var room = roomService.getRoomOrThrow(roomId);
+        var player = room.getPlayerOrThrow(playerId);
 
-        var winner = roomService.checkAllPassed(roomId);
+        playerService.pass(room, player);
+        roomService.dealCards(room);
+        messagingTemplate.convertAndSend("/topic/room/" + roomId, room);
+
+        var winner = roomService.checkAllPassed(room);
         winner.ifPresent(win -> {
             messagingTemplate.convertAndSend("/topic/room/" + roomId, new Winners("winner", Collections.singletonList(win)));
-            var room = roomService.getRoomOrThrow(roomId);
             room.getPlayers().forEach(p -> p.setActive(false));
-            taskScheduler.schedule(new NewRoundTask(roomId),new Date(System.currentTimeMillis() + 5000));
+            taskScheduler.schedule(new NewRoundTask(room),new Date(System.currentTimeMillis() + 5000));
         });
 
         return ResponseEntity.ok().build();
@@ -115,9 +120,12 @@ public class PlayerController {
      */
     @PutMapping("/api/room/{roomId}/player/{playerId}/ready")
     public ResponseEntity<?> playerReady(@PathVariable String roomId, @PathVariable int playerId) {
-        playerService.setReady(roomId, playerId);
+        var room = roomService.getRoomOrThrow(roomId);
+        var player = room.getPlayerOrThrow(playerId);
 
-        messagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
+        playerService.setReady(room, player);
+
+        messagingTemplate.convertAndSend("/topic/room/" + roomId, room);
         return ResponseEntity.ok().build();
     }
 

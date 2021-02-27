@@ -30,6 +30,21 @@ public class RoomService {
     }
 
     /**
+     * <h3>Szuka pokoju o podanym id</h3>
+     *
+     * @param id id pokoju
+     * @return Pokój
+     * @throws ResponseStatusException z HttpStatus.NOT_FOUND jeśli pokoju nie ma
+     */
+    public Room getRoomOrThrow(String id) {
+        var roomId = new RoomId(id);
+        if (rooms.containsKey(roomId))
+            return rooms.get(roomId);
+        else
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Room not found");
+    }
+
+    /**
      * <h3>Tworzenie pokoju</h3>
      *
      * @return Id utworzonego pokoju
@@ -64,12 +79,11 @@ public class RoomService {
     /**
      * <h3>Dodaje gracza do pokoju</h3>
      *
-     * @param roomId id pokoju
+     * @param room pokój
      * @return id nowo utworzonego gracza
      * @throws ResponseStatusException, BAD_REQUEST jeśli pokój jest pełny
      */
-    public int addPlayer(String roomId, PlayerDTO playerDTO) {
-        var room = getRoomOrThrow(roomId);
+    public int addPlayer(Room room, PlayerDTO playerDTO) {
         if (room.getPlayers().size() == 6)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Room is full");
 
@@ -79,17 +93,16 @@ public class RoomService {
     /**
      * <h3>Usuwanie gracza z pokoju</h3>
      *
-     * @param roomId   id pokoju
+     * @param room   pokój
      * @param playerId id gracza
      */
-    public void deletePlayer(String roomId, int playerId) {
-        var room = getRoomOrThrow(roomId);
+    public void deletePlayer(Room room, int playerId) {
         var players = room.getPlayers();
 
         var player = room.getPlayerOrThrow(playerId);
 
         if (player.isActive())
-            room.nextTurn(playerId);
+            room.nextTurn(player);
         room.deletePlayer(playerId);
 
         if (players.stream().filter(n -> !n.isPass()).count() == 1) {
@@ -112,22 +125,6 @@ public class RoomService {
         }
     }
 
-
-    /**
-     * <h3>Szuka pokoju o podanym id</h3>
-     *
-     * @param id id pokoju
-     * @return Pokój
-     * @throws ResponseStatusException z HttpStatus.NOT_FOUND jeśli pokoju nie ma
-     */
-    public Room getRoomOrThrow(String id) {
-        var roomId = new RoomId(id);
-        if (rooms.containsKey(roomId))
-            return rooms.get(roomId);
-        else
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Room not found");
-    }
-
     /**
      * <h3>Usuwanie pokoju</h3>
      *
@@ -141,11 +138,10 @@ public class RoomService {
     /**
      * <h3>Sprawdzanie czy wszyscy spasowali</h3>
      *
-     * @param roomId id pokoju
+     * @param room pokój
      * @return Optional ze zwycięzcą jeśli wszyscy spasowali, pusty jeśli nie
      */
-    public Optional<Winner> checkAllPassed(String roomId) {
-        var room = getRoomOrThrow(roomId);
+    public Optional<Winner> checkAllPassed(Room room) {
         var players = room.getPlayers();
         var table = room.getTable();
 
@@ -179,12 +175,11 @@ public class RoomService {
     /**
      * <h3>Startowanie rundy</h3>
      *
-     * @param roomId id pokoju
+     * @param room pokój
      * @throws ResponseStatusException BAD_REQUEST jeśli jest mniej niż 2 graczy
      * @throws ResponseStatusException BAD_REQUEST jeśli jest mniej niż dwóch bankrutów
      */
-    public void startRound(String roomId) {
-        var room = getRoomOrThrow(roomId);
+    public void startRound(Room room) {
         var players = room.getPlayers();
         room.getTable().getCommunitySet().clear();
         var notBankrupts = players.stream().filter(p -> p.getBudget() > 0).collect(Collectors.toList());
@@ -211,7 +206,7 @@ public class RoomService {
         if(notBankrupts.size() > 1) {
             players.forEach(n -> {
                 if (n.isStarting()) {
-                    room.nextTurn(n.getId());
+                    room.nextTurn(n);
                     n.setBet(bigBlind);
                     n.subBudget(bigBlind);
                     n.setWholeRoundBet(bigBlind);
@@ -249,10 +244,9 @@ public class RoomService {
     /**
      * <h3>Rozdawanie kart</h3>
      *
-     * @param roomId id pokoju
+     * @param room pokój
      */
-    public void dealCards(String roomId) {
-        var room = getRoomOrThrow(roomId);
+    public void dealCards(Room room) {
         var players = room.getPlayers();
         var notPassed = room.getNotPassedPlayers();
         var table = room.getTable();
@@ -284,11 +278,10 @@ public class RoomService {
     /**
      * <h3>Wyszukiwanie zwycięzców po każdym becie</h3>
      *
-     * @param roomId id pokoju
+     * @param room pokój
      * @return Optional ze zwycięzcami jeśli wszyscy sprawdzili, pusty jeśli nie
      */
-    public Optional<List<Winner>> getWinners(String roomId) {
-        var room = getRoomOrThrow(roomId);
+    public Optional<List<Winner>> getWinners(Room room) {
         var notPassed = room.getNotPassedPlayers();
         var table = room.getTable();
         var players = room.getPlayers();

@@ -79,10 +79,9 @@ public class Room {
 
     /**
      * <h3>Zmiania gracza którego jest to aktualnie aktywny na następnego w kolejce</h3>
-     * @param playerId id gracza który jest teraz aktywny
+     * @param activePlayer gracz który jest teraz aktywny
      */
-    public void nextTurn(int playerId) {
-        var activePlayer = getPlayerOrThrow(playerId);
+    public void nextTurn(Player activePlayer) {
 
         activePlayer.setActive(false);
         //szukam pierwszego nie spasowanego
@@ -91,7 +90,7 @@ public class Room {
                 .findFirst();
         //szukam pierwszego aktywnego z wyższym id
         var higherId = players.stream()
-                .filter(n -> !n.isPass() && n.getId() > playerId)
+                .filter(n -> !n.isPass() && n.getId() > activePlayer.getId())
                 .findFirst();
         //jeśli jest z wyższym id to zmieniam jego
         Player pla;

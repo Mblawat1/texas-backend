@@ -66,22 +66,6 @@ public class RoomController {
         return ResponseEntity.ok(new RoomId(roomId));
     }
 
-    //usunięcie pokoju
-//    @DeleteMapping("/api/room/{roomId}")
-//    public ResponseEntity<?> deleteRoom(@PathVariable String roomId) {
-//        var res = roomService.deleteRoom(roomId);
-//        if (res.isEmpty())
-//            return ResponseEntity.notFound().build();
-//        return ResponseEntity.noContent().build();
-//    }
-
-//    @GetMapping("/api/room/{roomId}/start")
-//    public ResponseEntity<?> startRound(@PathVariable String roomId) {
-//        roomService.startRound(roomId);
-//        simpMessagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
-//        return ResponseEntity.ok().build();
-//    }
-
     /**
      * <h3>Dołączanie do pokoju</h3>
      * @param roomId Id pokoju
@@ -94,8 +78,10 @@ public class RoomController {
      */
     @PostMapping("/api/room/{roomId}/player")
     public ResponseEntity<?> joinRoom(@PathVariable String roomId, @RequestBody PlayerDTO player) {
-        var id = roomService.addPlayer(roomId, player);
-        messagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
+        var room = roomService.getRoomOrThrow(roomId);
+
+        var id = roomService.addPlayer(room, player);
+        messagingTemplate.convertAndSend("/topic/room/" + roomId, room);
         return ResponseEntity.ok().body(new Id(id));
     }
 
@@ -107,10 +93,12 @@ public class RoomController {
      */
     @PostMapping("/api/room/{roomId}/player/{playerId}/delete")
     public ResponseEntity<?> leaveRoom(@PathVariable String roomId, @PathVariable int playerId) {
-        roomService.deletePlayer(roomId, playerId);
-        messagingTemplate.convertAndSend("/topic/room/" + roomId, roomService.getRoomOrThrow(roomId));
+        var room = roomService.getRoomOrThrow(roomId);
 
-        var playersInRoom = roomService.getRoomOrThrow(roomId).getPlayers().size();
+        roomService.deletePlayer(room, playerId);
+        messagingTemplate.convertAndSend("/topic/room/" + roomId, room);
+
+        var playersInRoom = room.getPlayers().size();
         if (playersInRoom == 0)
             roomService.deleteRoom(roomId);
 

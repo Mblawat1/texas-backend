@@ -16,14 +16,11 @@ public class PlayerService {
 
     /**
      * <h3>Zwiększanie betu gracza</h3>
-     * @param roomId id pokoju
-     * @param playerId id gracza
+     * @param room pokój
+     * @param player gracz który betuje
      * @param bet wysokość zakładu którą dokładamy do zakłądu
      */
-    public void setBet(String roomId, int playerId, int bet) {
-        var room = roomService.getRoomOrThrow(roomId);
-        var player = room.getPlayerOrThrow(playerId);
-
+    public void setBet(Room room, Player player, int bet) {
         var notPassed = room.getNotPassedPlayers();
         var maxBet = notPassed.stream()
                 .max(Comparator.comparingInt(Player::getBet))
@@ -59,17 +56,15 @@ public class PlayerService {
             player.setLastAction("call");
 
         player.setCheck(true);
-        room.nextTurn(playerId);
+        room.nextTurn(player);
     }
 
     /**
      * <h3>Pasowanie</h3>
-     * @param roomId id pokoju
-     * @param playerId id gracza
+     * @param room pokój
+     * @param player gracz który chce spasować
      */
-    public void pass(String roomId, int playerId) {
-        var room = roomService.getRoomOrThrow(roomId);
-        var player = room.getPlayerOrThrow(playerId);
+    public void pass(Room room, Player player) {
 
         if (player.isPass())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Player already passed");
@@ -80,25 +75,23 @@ public class PlayerService {
         player.setCheck(false);
         player.setLastAction("fold");
 
-        room.nextTurn(playerId);
+        room.nextTurn(player);
 
     }
 
     /**
      * <h3>Zmiana gotowaści gracza</h3>
-     * @param roomId id pokoju
-     * @param playerId id gracza
+     * @param room pokój
+     * @param player gracz który znienia gotowość
      */
-    public void setReady(String roomId, int playerId) {
-        var room = roomService.getRoomOrThrow(roomId);
-        var player = room.getPlayerOrThrow(playerId);
+    public void setReady(Room room, Player player) {
         player.setReady(!player.isReady());
 
         var players = room.getPlayers();
         var ready = players.stream().filter(n -> n.isReady()).count();
 
         if (ready == players.size())
-            roomService.startRound(roomId);
+            roomService.startRound(room);
 
     }
 
